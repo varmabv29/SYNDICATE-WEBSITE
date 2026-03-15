@@ -9,6 +9,8 @@ export async function GET() {
   const userId = memberEntry.user.id;
 
   try {
+    const user = await prisma.user.findUnique({ where: { id: userId }, select: { name: true, username: true } });
+
     const premiums = await prisma.premium.findMany({
       where: { userId },
       orderBy: { datePaid: "desc" },
@@ -39,6 +41,7 @@ export async function GET() {
     const totalExpenditures = expenditures.reduce((sum, e) => sum + e.amount, 0);
 
     return NextResponse.json({
+      userName: user?.name || user?.username || "Member",
       summary: {
         totalPremiumsPaid,
         dividendEarned,

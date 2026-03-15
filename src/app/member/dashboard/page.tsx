@@ -67,7 +67,7 @@ export default function MemberDashboardPage() {
   if (loading) return <div className="p-8 text-center text-slate-500">Loading your financial dashboard...</div>;
   if (!data || data.error) return <div className="p-8 text-center text-rose-500">Error loading dashboard</div>;
 
-  const { summary, premiums, loans } = data;
+  const { userName, summary, premiums, loans } = data;
   const filteredLoans = loans.filter((l: any) => l.status === filter || (filter === "SETTLED" && l.status === "FORECLOSED"));
   
   let upcomingInstallment = null;
@@ -94,7 +94,7 @@ export default function MemberDashboardPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight text-slate-900">My Financial Summary</h1>
+      <h1 className="text-2xl font-bold tracking-tight text-slate-900">Hello, {userName} 👋</h1>
       
       {/* Top Level Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-6">
