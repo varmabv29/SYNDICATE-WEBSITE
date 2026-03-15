@@ -23,7 +23,9 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
       return NextResponse.json({ error: "Only ACTIVE loans can be deleted. Settled loans must remain for history." }, { status: 400 });
     }
 
-    // Prisma's Cascade delete will handle the installments automatically
+    // MongoDB doesn't support cascade deletes — manually delete installments first
+    await prisma.installment.deleteMany({ where: { loanId: id } });
+
     await prisma.loan.delete({
       where: { id }
     });

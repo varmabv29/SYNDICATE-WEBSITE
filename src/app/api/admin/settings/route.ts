@@ -9,9 +9,9 @@ export async function GET() {
   if (!adminEntry) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    let setting = await prisma.setting.findUnique({ where: { id: "global" } });
+    let setting = await prisma.setting.findFirst();
     if (!setting) {
-      setting = await prisma.setting.create({ data: { id: "global", monthlyPremium: 0 } });
+      setting = await prisma.setting.create({ data: { monthlyPremium: 0 } });
     }
     return NextResponse.json(setting);
   } catch (error: any) {
@@ -30,11 +30,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid premium amount" }, { status: 400 });
     }
 
-    const setting = await prisma.setting.upsert({
-      where: { id: "global" },
-      update: { monthlyPremium },
-      create: { id: "global", monthlyPremium }
-    });
+    let setting = await prisma.setting.findFirst();
+    if (setting) {
+      setting = await prisma.setting.update({
+        where: { id: setting.id },
+        data: { monthlyPremium }
+      });
+    } else {
+      setting = await prisma.setting.create({
+        data: { monthlyPremium }
+      });
+    }
 
     return NextResponse.json({ success: true, setting });
   } catch (error: any) {

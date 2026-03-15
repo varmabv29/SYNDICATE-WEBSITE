@@ -110,6 +110,18 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: "Cannot delete user with active loans. Settle loans first." }, { status: 400 });
     }
 
+    // MongoDB doesn't support cascade deletes — manually clean up related records
+    // 1. Delete premiums
+    await prisma.premium.deleteMany({ where: { userId: id } });
+    // 2. Delete installments for all user's loans
+    const userLoans = await prisma.loan.findMany({ where: { userId: id }, select: { id: true } });
+    const loanIds = userLoans.map((l: any) => l.id);
+    if (loanIds.length > 0) {
+      await prisma.installment.deleteMany({ where: { loanId: { in: loanIds } } });
+    }
+    // 3. Delete loans
+    await prisma.loan.deleteMany({ where: { userId: id } });
+    // 4. Delete the user
     await prisma.user.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (error: any) {

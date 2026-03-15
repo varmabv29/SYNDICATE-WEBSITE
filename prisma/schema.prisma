@@ -3,17 +3,17 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id           String        @id @default(cuid())
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
   name         String?
   username     String        @unique
   passwordHash String
   role         String        @default("MEMBER") // "ADMIN" or "MEMBER"
-  memberSerial Int?          // Nullable for now to prevent SQLite migration reset on existing data, but we'll assign it.
+  memberSerial Int?
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   premiums     Premium[]
@@ -21,30 +21,30 @@ model User {
 }
 
 model Premium {
-  id        String   @id @default(cuid())
-  userId    String
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
   amount    Float
   datePaid  DateTime
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model Loan {
-  id               String        @id @default(cuid())
+  id               String        @id @default(auto()) @map("_id") @db.ObjectId
   customId         String        @unique
-  userId           String
+  userId           String        @db.ObjectId
   principalAmount  Float
   interestRate     Float
   startDate        DateTime
   status           String        @default("ACTIVE") // "ACTIVE", "SETTLED", "FORECLOSED"
   foreclosureMonth String?       // e.g., "2023-11"
   settlementAmount Float?
-  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user             User          @relation(fields: [userId], references: [id])
   installments     Installment[]
 }
 
 model Installment {
-  id         String    @id @default(cuid())
-  loanId       String
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  loanId       String    @db.ObjectId
   monthYear    String    // e.g., "2023-10"
   amountDue    Float
   principalDue Float     @default(0)
@@ -53,12 +53,12 @@ model Installment {
   amountPaid   Float     @default(0)
   interestPaid Float     @default(0)
   paidDate     DateTime?
-  status     String    @default("PENDING") // "PENDING" or "PAID"
-  loan       Loan      @relation(fields: [loanId], references: [id], onDelete: Cascade)
+  status       String    @default("PENDING") // "PENDING" or "PAID"
+  loan         Loan      @relation(fields: [loanId], references: [id])
 }
 
 model Expenditure {
-  id        String   @id @default(cuid())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   amount    Float
   date      DateTime @default(now())
   monthYear String   // e.g., "2023-10"
@@ -66,7 +66,6 @@ model Expenditure {
 }
 
 model Setting {
-  id             String @id @default("global")
+  id             String @id @default(auto()) @map("_id") @db.ObjectId
   monthlyPremium Float  @default(0)
 }
-
