@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { checkAdmin } from "@/lib/auth-utils";
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const adminEntry = await checkAdmin();
   if (!adminEntry) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -27,7 +27,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const adminEntry = await checkAdmin();
   if (!adminEntry) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
