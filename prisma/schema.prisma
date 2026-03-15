@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(cuid())
+  name         String?
+  username     String        @unique
+  passwordHash String
+  role         String        @default("MEMBER") // "ADMIN" or "MEMBER"
+  memberSerial Int?          // Nullable for now to prevent SQLite migration reset on existing data, but we'll assign it.
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  premiums     Premium[]
+  loans        Loan[]
+}
+
+model Premium {
+  id        String   @id @default(cuid())
+  userId    String
+  amount    Float
+  datePaid  DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Loan {
+  id               String        @id @default(cuid())
+  customId         String        @unique
+  userId           String
+  principalAmount  Float
+  interestRate     Float
+  startDate        DateTime
+  status           String        @default("ACTIVE") // "ACTIVE", "SETTLED", "FORECLOSED"
+  foreclosureMonth String?       // e.g., "2023-11"
+  settlementAmount Float?
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  installments     Installment[]
+}
+
+model Installment {
+  id         String    @id @default(cuid())
+  loanId       String
+  monthYear    String    // e.g., "2023-10"
+  amountDue    Float
+  principalDue Float     @default(0)
+  interestDue  Float     @default(0)
+  dueDate      DateTime
+  amountPaid   Float     @default(0)
+  interestPaid Float     @default(0)
+  paidDate     DateTime?
+  status     String    @default("PENDING") // "PENDING" or "PAID"
+  loan       Loan      @relation(fields: [loanId], references: [id], onDelete: Cascade)
+}
+
+model Expenditure {
+  id        String   @id @default(cuid())
+  amount    Float
+  date      DateTime @default(now())
+  monthYear String   // e.g., "2023-10"
+  remarks   String?
+}
+
+model Setting {
+  id             String @id @default("global")
+  monthlyPremium Float  @default(0)
+}
+
