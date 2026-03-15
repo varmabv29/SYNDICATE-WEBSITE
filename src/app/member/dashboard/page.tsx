@@ -42,18 +42,7 @@ export default function MemberDashboardPage() {
     }
   }, [startMonth, endMonth]);
 
-  const handleForeclose = async (loanId: string) => {
-    if (confirm("Are you sure you want to foreclose this loan? This action will definitively close the loan structure.")) {
-      const res = await fetch(`/api/member/loans/${loanId}/foreclose`, { method: "POST" });
-      if (res.ok) {
-        alert("Loan Foreclosed Successfully");
-        fetchDashboardData();
-      } else {
-        const { error } = await res.json();
-        alert(`Foreclosure failed: ${error}`);
-      }
-    }
-  };
+
 
   const handleDownloadSchedule = (loan: any) => {
     // Basic CSV download stub for the schedule
@@ -267,11 +256,6 @@ export default function MemberDashboardPage() {
                        <button onClick={() => handleDownloadSchedule(loan)} className="p-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition" title="Download Schedule">
                          <Download className="w-4 h-4" />
                        </button>
-                       {loan.status === 'ACTIVE' && (
-                         <button onClick={() => handleForeclose(loan.id)} className="text-xs bg-rose-600 hover:bg-rose-700 text-white font-medium px-3 py-1.5 rounded-lg transition-colors">
-                           Foreclose Loan
-                         </button>
-                       )}
                      </div>
                    </div>
                    
