@@ -70,7 +70,7 @@ export default function LoginPage() {
                 <input 
                   type="text" 
                   required
-                  className="w-full pl-10 pr-3 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400/50 outline-none transition-all text-white placeholder-indigo-200/30" 
+                  className="w-full pl-10 pr-3 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400/50 outline-none transition-all text-black placeholder-indigo-200/30" 
                   placeholder="Enter your username" 
                   value={formData.username}
                   onChange={e => setFormData({...formData, username: e.target.value})}
@@ -87,7 +87,7 @@ export default function LoginPage() {
                 <input 
                   type="password" 
                   required
-                  className="w-full pl-10 pr-3 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400/50 outline-none transition-all text-white placeholder-indigo-200/30" 
+                  className="w-full pl-10 pr-3 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400/50 outline-none transition-all text-black placeholder-indigo-200/30" 
                   placeholder="••••••••" 
                   value={formData.password}
                   onChange={e => setFormData({...formData, password: e.target.value})}
