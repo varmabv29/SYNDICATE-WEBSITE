@@ -97,7 +97,7 @@ export default function MemberDashboardPage() {
       <h1 className="text-2xl font-bold tracking-tight text-slate-900">Hello, {userName} 👋</h1>
       
       {/* Top Level Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 md:gap-6">
         {/* NAV Card */}
         <div className="bg-indigo-600 rounded-xl border border-indigo-700 p-6 shadow-sm text-white">
            <div className="flex items-center justify-between mb-4">

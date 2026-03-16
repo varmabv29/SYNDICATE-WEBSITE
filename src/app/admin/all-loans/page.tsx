@@ -65,7 +65,7 @@ export default function AdminGroupLoansPage() {
                     className="p-4 hover:bg-slate-50 cursor-pointer transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="hidden md:flex items-center justify-center text-slate-400 group-hover:text-indigo-600 transition-colors">
+                      <div className="flex items-center justify-center text-slate-400 group-hover:text-indigo-600 transition-colors">
                         {isExpanded ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
                       </div>
                       <div>

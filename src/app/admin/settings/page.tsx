@@ -89,7 +89,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Global Defaults */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden max-w-2xl">
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden w-full max-w-2xl">
         <div className="border-b border-slate-200 bg-slate-50 p-4">
           <h2 className="font-semibold text-slate-900 flex items-center gap-2">
             <Settings className="w-5 h-5 text-indigo-500" />
@@ -136,7 +136,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Change Password */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden max-w-2xl">
+      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden w-full max-w-2xl">
         <div className="border-b border-slate-200 bg-slate-50 p-4">
           <h2 className="font-semibold text-slate-900 flex items-center gap-2">
             <KeyRound className="w-5 h-5 text-amber-500" />

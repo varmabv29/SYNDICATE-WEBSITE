@@ -177,7 +177,7 @@ export default function BulkCollectionsPage() {
               <button 
                 type="submit" 
                 disabled={submitting || entries.length === 0}
-                className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-medium py-2 px-6 rounded-lg transition-colors flex items-center gap-2"
+                className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-medium py-2.5 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
               >
                 <CheckCircle2 className="w-5 h-5" />
                 {submitting ? "Processing Ledger..." : "Submit All Collections"}
