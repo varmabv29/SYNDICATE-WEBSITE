@@ -93,7 +93,7 @@ export default async function AdminDashboardPage() {
       <div className="mt-8 bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
         <h2 className="text-lg font-semibold text-slate-900 mb-4">Quick Limits & Info</h2>
         <p className="text-slate-600">
-          The Group Finance Tracker enables the administrator to collect monthly premiums and issue loans automatically scheduled with equal installments. Access specific management tools explicitly from the sidebar.
+          This website enables the administrator to collect monthly premiums and issue loans automatically scheduled with equal installments. Access specific management tools explicitly from the sidebar.
         </p>
       </div>
     </div>

@@ -18,7 +18,7 @@ import "./globals.css";
 // ... keep fonts ...
 
 export const metadata: Metadata = {
-  title: "Group Finance Tracker",
+  title: "Master Minds Syndicate",
   description: "Track your private group finances and loans easily.",
 };
 
