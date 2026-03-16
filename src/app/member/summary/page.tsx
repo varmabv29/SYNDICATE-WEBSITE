@@ -64,7 +64,7 @@ export default async function MemberSyndicateSummaryPage() {
             </div>
             <div className="w-px bg-white/20"></div>
             <div className="flex flex-col">
-              <span className="text-indigo-200">Total Outflow</span>
+              <span className="text-indigo-200">Total Outflow(Loans + Exp)</span>
               <span className="text-rose-300">₹{(totalDisbursed + totalExpenditures).toFixed(2)}</span>
             </div>
           </div>

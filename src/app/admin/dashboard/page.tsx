@@ -8,7 +8,7 @@ export default async function AdminDashboardPage() {
   if (!session) redirect("/");
 
   const totalUsers = await prisma.user.count({ where: { role: "MEMBER" } });
-  
+
   const premiums = await prisma.premium.aggregate({ _sum: { amount: true } });
   const totalCollections = premiums._sum.amount || 0;
 
@@ -59,12 +59,12 @@ export default async function AdminDashboardPage() {
           </div>
           <div className="flex gap-4 text-xs font-medium border-t border-white/20 pt-4 mt-2 max-w-lg">
             <div className="flex flex-col">
-              <span className="text-indigo-200">Total Inflow</span>
+              <span className="text-indigo-200">Total Inflow(Premiums + Repaid)</span>
               <span className="text-emerald-300">₹{(totalCollections + totalRepaid).toFixed(2)}</span>
             </div>
             <div className="w-px bg-white/20"></div>
             <div className="flex flex-col">
-              <span className="text-indigo-200">Total Outflow</span>
+              <span className="text-indigo-200">Total Outflow(Loans + Exp)</span>
               <span className="text-rose-300">₹{(totalDisbursed + totalExpenditures).toFixed(2)}</span>
             </div>
           </div>
@@ -89,7 +89,7 @@ export default async function AdminDashboardPage() {
           )
         })}
       </div>
-      
+
       <div className="mt-8 bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
         <h2 className="text-lg font-semibold text-slate-900 mb-4">Quick Limits & Info</h2>
         <p className="text-slate-600">
