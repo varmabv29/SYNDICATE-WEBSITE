@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { LayoutDashboard, LogOut, Banknote, Users, Menu, X } from "lucide-react";
+import { LayoutDashboard, LogOut, Banknote, Users, Menu, X, TrendingUp } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 
 export default function MemberLayout({ children }: { children: React.ReactNode }) {
@@ -16,6 +16,7 @@ export default function MemberLayout({ children }: { children: React.ReactNode }
 
   const links = [
     { href: "/member/dashboard", label: "My Dashboard", icon: LayoutDashboard },
+    { href: "/member/summary", label: "Syndicate Summary", icon: TrendingUp },
     { href: "/member/loans", label: "Group Loans", icon: Banknote },
     { href: "/member/directory", label: "Member Directory", icon: Users },
   ];
