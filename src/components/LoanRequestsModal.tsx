@@ -94,6 +94,7 @@ export default function LoanRequestsModal({
                     <div>
                       <h4 className="font-bold text-slate-900">{req.user.name} (@{req.user.username})</h4>
                       <p className="text-sm text-slate-500">Requested on {formatDate(req.createdAt)}</p>
+                      <p className="text-sm font-medium text-slate-700 mt-1">Duration: {req.durationMonths} Months</p>
                     </div>
                     <div className="flex items-start gap-4 text-right">
                       <div>

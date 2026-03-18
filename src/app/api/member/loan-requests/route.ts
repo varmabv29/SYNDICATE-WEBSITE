@@ -7,9 +7,9 @@ export async function POST(req: Request) {
   if (!memberEntry) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const { amount, monthYear, priority, remarks } = await req.json();
+    const { amount, monthYear, durationMonths, priority, remarks } = await req.json();
 
-    if (!amount || !monthYear || !priority) {
+    if (!amount || !monthYear || !durationMonths || !priority) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
@@ -18,6 +18,7 @@ export async function POST(req: Request) {
         userId: memberEntry.user.id,
         amount: parseFloat(amount),
         monthYear,
+        durationMonths: parseInt(durationMonths, 10),
         priority,
         remarks: remarks || "",
       }

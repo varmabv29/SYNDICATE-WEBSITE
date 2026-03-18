@@ -19,7 +19,7 @@ export default function MemberDashboardPage() {
   // Loan Request states
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
-  const [requestForm, setRequestForm] = useState({ amount: "", monthYear: "", priority: "Medium", remarks: "" });
+  const [requestForm, setRequestForm] = useState({ amount: "", monthYear: "", durationMonths: "6", priority: "Medium", remarks: "" });
   const [submittingRequest, setSubmittingRequest] = useState(false);
 
   const fetchDashboardData = () => {
@@ -61,7 +61,7 @@ export default function MemberDashboardPage() {
     if (res.ok) {
       alert("Loan request submitted successfully!");
       setIsRequestModalOpen(false);
-      setRequestForm({ amount: "", monthYear: "", priority: "Medium", remarks: "" });
+      setRequestForm({ amount: "", monthYear: "", durationMonths: "6", priority: "Medium", remarks: "" });
       fetchDashboardData();
     } else {
       const { error } = await res.json();
@@ -390,6 +390,10 @@ export default function MemberDashboardPage() {
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Month & Year Details</label>
                 <input required type="text" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white" placeholder="e.g. November 2024" value={requestForm.monthYear} onChange={e => setRequestForm({...requestForm, monthYear: e.target.value})} />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Repayment Tenure (Months)</label>
+                <input required type="number" min="1" max="60" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white" placeholder="e.g. 6" value={requestForm.durationMonths} onChange={e => setRequestForm({...requestForm, durationMonths: e.target.value})} />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Priority</label>

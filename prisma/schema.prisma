@@ -76,6 +76,7 @@ model LoanRequest {
   userId    String   @db.ObjectId
   amount    Float
   monthYear String
+  durationMonths Int
   priority  String
   remarks   String?
   status    String   @default("PENDING") // PENDING, APPROVED, REJECTED
