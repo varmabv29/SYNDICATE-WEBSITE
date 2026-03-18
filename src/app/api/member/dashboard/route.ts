@@ -40,6 +40,10 @@ export async function GET() {
     const expenditures = await prisma.expenditure.findMany();
     const totalExpenditures = expenditures.reduce((sum, e) => sum + e.amount, 0);
 
+    const pendingLoanRequests = await prisma.loanRequest.count({
+      where: { status: "PENDING" }
+    });
+
     return NextResponse.json({
       userName: user?.name || user?.username || "Member",
       summary: {
@@ -48,6 +52,7 @@ export async function GET() {
         nav,
         totalExpenditures,
         activeLoansCount: loans.filter((l: any) => l.status === "ACTIVE").length,
+        pendingLoanRequests,
       },
       premiums,
       loans

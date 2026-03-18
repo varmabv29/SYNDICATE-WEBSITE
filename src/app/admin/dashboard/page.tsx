@@ -1,7 +1,8 @@
 import prisma from "@/lib/prisma";
 import { checkAdmin } from "@/lib/auth-utils";
 import { redirect } from "next/navigation";
-import { Users, CreditCard, Banknote, TrendingUp, Wallet } from "lucide-react";
+import { Users, CreditCard, Banknote, TrendingUp, Wallet, AlertTriangle } from "lucide-react";
+import AdminLoanRequestsCard from "@/components/AdminLoanRequestsCard";
 
 export default async function AdminDashboardPage() {
   const session = await checkAdmin();
@@ -32,6 +33,8 @@ export default async function AdminDashboardPage() {
 
   const expendituresData = await prisma.expenditure.aggregate({ _sum: { amount: true } });
   const totalExpenditures = expendituresData._sum.amount || 0;
+
+  const pendingRequests = await prisma.loanRequest.count({ where: { status: "PENDING" } });
 
   const cashInHand = totalCollections + totalRepaid - totalDisbursed - totalExpenditures;
 
@@ -88,6 +91,7 @@ export default async function AdminDashboardPage() {
             </div>
           )
         })}
+        <AdminLoanRequestsCard pendingCount={pendingRequests} />
       </div>
 
       <div className="mt-8 bg-white rounded-xl border border-slate-200 p-6 shadow-sm">

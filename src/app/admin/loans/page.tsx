@@ -43,12 +43,19 @@ export default function LoansManagerPage() {
     }
   };
 
-  const markPaid = async (installmentId: string) => {
+  const togglePaidStatus = async (installmentId: string, currentStatus: string) => {
+    const action = currentStatus === 'PAID' ? 'mark_unpaid' : 'mark_paid';
     const res = await fetch(`/api/admin/installments/${installmentId}`, {
-      method: "PUT"
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action })
     });
-    if (res.ok) fetchData();
-    else alert("Failed to mark as paid");
+    if (res.ok) {
+      fetchData();
+    } else {
+      const data = await res.json().catch(() => ({}));
+      alert(`Failed to update status: ${data.error || 'Unknown error'}`);
+    }
   };
 
   const handleDeleteLoan = async (loanId: string) => {
@@ -206,18 +213,22 @@ export default function LoansManagerPage() {
                             <td className="p-3 font-bold text-slate-900">₹{inst.amountDue.toFixed(2)}</td>
                             <td className="p-3 text-slate-500">₹{Math.max(0, closing).toFixed(2)}</td>
                             <td className="p-3 pr-4 text-right">
-                              {inst.status === 'PAID' ? (
-                                <span className="inline-flex items-center gap-1 text-emerald-600 text-[10px] uppercase font-bold bg-emerald-50 px-2 py-0.5 rounded">
-                                  <CheckCircle2 className="w-3 h-3"/> Paid
-                                </span>
-                              ) : (
-                                <button 
-                                  onClick={() => markPaid(inst.id)}
-                                  className="text-xs bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 rounded transition-colors"
-                                >
-                                  Mark Paid
-                                </button>
-                              )}
+                              <button 
+                                onClick={() => togglePaidStatus(inst.id, inst.status)}
+                                className={`text-xs px-3 py-1.5 rounded transition-colors inline-flex items-center justify-center gap-1 w-full max-w-[140px] ml-auto ${
+                                  inst.status === 'PAID' 
+                                    ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-medium border border-emerald-200' 
+                                    : 'bg-slate-900 hover:bg-slate-800 text-white'
+                                }`}
+                              >
+                                {inst.status === 'PAID' ? (
+                                  <>
+                                    <CheckCircle2 className="w-3 h-3"/> Paid (Undo)
+                                  </>
+                                ) : (
+                                  'Mark Paid'
+                                )}
+                              </button>
                             </td>
                           </tr>
                         );

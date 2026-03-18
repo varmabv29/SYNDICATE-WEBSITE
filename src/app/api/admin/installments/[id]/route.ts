@@ -9,6 +9,17 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   try {
     const { id } = await params;
     
+    let action = "mark_paid";
+    try {
+      const bodyText = await req.text();
+      if (bodyText) {
+        const body = JSON.parse(bodyText);
+        if (body.action) action = body.action;
+      }
+    } catch (e) {
+      // Ignore parse error
+    }
+
     // First, get the installment to check its state
     const installment = await prisma.installment.findUnique({
       where: { id }
@@ -16,6 +27,33 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 
     if (!installment) {
       return NextResponse.json({ error: "Installment not found" }, { status: 404 });
+    }
+
+    if (action === "mark_unpaid") {
+      if (installment.status !== "PAID") {
+        return NextResponse.json({ error: "Installment is not paid yet" }, { status: 400 });
+      }
+
+      const updated = await prisma.installment.update({
+        where: { id },
+        data: {
+          status: "PENDING",
+          amountPaid: 0,
+          interestPaid: 0,
+          paidDate: null
+        }
+      });
+
+      // If the loan was SETTLED, unpaying an installment should make it ACTIVE again
+      const loan = await prisma.loan.findUnique({ where: { id: installment.loanId }});
+      if (loan?.status === "SETTLED") {
+        await prisma.loan.update({
+          where: { id: installment.loanId },
+          data: { status: "ACTIVE" }
+        });
+      }
+
+      return NextResponse.json(updated);
     }
 
     if (installment.status === "PAID") {

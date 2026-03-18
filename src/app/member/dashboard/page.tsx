@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { HandCoins, TrendingUp, CreditCard, History, CheckCircle2, Clock, CheckIcon, Search, Download, AlertTriangle, Receipt } from "lucide-react";
+import { HandCoins, TrendingUp, CreditCard, History, CheckCircle2, Clock, CheckIcon, Search, Download, AlertTriangle, Receipt, Send, X } from "lucide-react";
 import { formatDate } from "@/lib/format";
+import LoanRequestsModal from "@/components/LoanRequestsModal";
 
 export default function MemberDashboardPage() {
   const [data, setData] = useState<any>(null);
@@ -14,6 +15,12 @@ export default function MemberDashboardPage() {
   const [endMonth, setEndMonth] = useState("");
   const [summaryData, setSummaryData] = useState<any>(null);
   const [loadingSummary, setLoadingSummary] = useState(false);
+
+  // Loan Request states
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
+  const [requestForm, setRequestForm] = useState({ amount: "", monthYear: "", priority: "Medium", remarks: "" });
+  const [submittingRequest, setSubmittingRequest] = useState(false);
 
   const fetchDashboardData = () => {
     fetch("/api/member/dashboard")
@@ -41,6 +48,26 @@ export default function MemberDashboardPage() {
       setSummaryData(null);
     }
   }, [startMonth, endMonth]);
+
+  const handleRequestLoan = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmittingRequest(true);
+    const res = await fetch("/api/member/loan-requests", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(requestForm),
+    });
+    setSubmittingRequest(false);
+    if (res.ok) {
+      alert("Loan request submitted successfully!");
+      setIsRequestModalOpen(false);
+      setRequestForm({ amount: "", monthYear: "", priority: "Medium", remarks: "" });
+      fetchDashboardData();
+    } else {
+      const { error } = await res.json();
+      alert(`Failed to submit request: ${error}`);
+    }
+  };
 
 
 
@@ -94,7 +121,16 @@ export default function MemberDashboardPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight text-slate-900">Hello, {userName} 👋</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Hello, {userName} 👋</h1>
+        <button 
+          onClick={() => setIsRequestModalOpen(true)}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 font-medium rounded-lg shadow-sm transition-colors flex items-center gap-2"
+        >
+          <Send className="w-4 h-4" />
+          Request Loan
+        </button>
+      </div>
       
       {/* Top Level Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 md:gap-6">
@@ -168,6 +204,22 @@ export default function MemberDashboardPage() {
            )}
          </div>
       </div>
+
+          <button 
+            onClick={() => setIsViewModalOpen(true)}
+            className="bg-gradient-to-br from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 text-left rounded-xl border border-amber-200 p-6 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-amber-500 xl:col-span-2 sm:col-span-2 lg:col-span-3 transition-transform hover:scale-[1.02] mt-4"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="text-sm font-medium text-amber-800">Pending System Loan Requests</h2>
+              <div className="p-2 rounded-lg bg-amber-200 text-amber-700">
+                <AlertTriangle className="w-5 h-5" />
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-amber-900">{summary.pendingLoanRequests || 0}</div>
+            <p className="text-sm text-amber-700 mt-1 flex items-center gap-1 font-medium">
+              Click to view all requests globally →
+            </p>
+          </button>
 
       {/* Date Range Summary Dashboard */}
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 mt-8">
@@ -306,6 +358,64 @@ export default function MemberDashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* Loan Requests View Modal */}
+      <LoanRequestsModal 
+        isOpen={isViewModalOpen} 
+        onClose={() => setIsViewModalOpen(false)} 
+      />
+
+      {/* Request Loan Form Modal */}
+      {isRequestModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col">
+            <div className="flex items-center justify-between p-6 border-b border-slate-200">
+              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                <Send className="w-5 h-5 text-indigo-500" />
+                Submit a Loan Request
+              </h2>
+              <button 
+                onClick={() => setIsRequestModalOpen(false)}
+                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <form onSubmit={handleRequestLoan} className="p-6 space-y-4 bg-slate-50 border-b border-slate-200">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Requested Amount (₹)</label>
+                <input required type="number" min="1" step="0.01" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white" placeholder="e.g. 10000" value={requestForm.amount} onChange={e => setRequestForm({...requestForm, amount: e.target.value})} />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Month & Year Details</label>
+                <input required type="text" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white" placeholder="e.g. November 2024" value={requestForm.monthYear} onChange={e => setRequestForm({...requestForm, monthYear: e.target.value})} />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Priority</label>
+                <select className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white" value={requestForm.priority} onChange={e => setRequestForm({...requestForm, priority: e.target.value})}>
+                  <option value="Low">Low Priority</option>
+                  <option value="Medium">Medium Priority</option>
+                  <option value="High">High Priority</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Remarks / Reason (Optional)</label>
+                <textarea rows={3} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white resize-none" placeholder="Medical emergency, vacation, etc." value={requestForm.remarks} onChange={e => setRequestForm({...requestForm, remarks: e.target.value})} />
+              </div>
+              
+              <div className="pt-2 flex justify-end gap-3">
+                <button type="button" onClick={() => setIsRequestModalOpen(false)} className="px-4 py-2 text-slate-700 font-medium hover:bg-slate-200 bg-slate-100 rounded-lg transition-colors">
+                  Cancel
+                </button>
+                <button type="submit" disabled={submittingRequest} className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg disabled:opacity-50 transition-colors">
+                  {submittingRequest ? "Submitting..." : "Submit Request"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

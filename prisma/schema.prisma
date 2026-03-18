@@ -18,6 +18,7 @@ model User {
   updatedAt    DateTime      @updatedAt
   premiums     Premium[]
   loans        Loan[]
+  loanRequests LoanRequest[]
 }
 
 model Premium {
@@ -68,4 +69,16 @@ model Expenditure {
 model Setting {
   id             String @id @default(auto()) @map("_id") @db.ObjectId
   monthlyPremium Float  @default(0)
+}
+
+model LoanRequest {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  amount    Float
+  monthYear String
+  priority  String
+  remarks   String?
+  status    String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
 }
