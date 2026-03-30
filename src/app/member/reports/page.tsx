@@ -89,9 +89,10 @@ export default function MemberReportsPage() {
     fetch("/api/member/directory")
       .then((res) => res.json())
       .then((data) => {
-        setMembers(data);
+        // API returns { members: [...], ... } — extract the array
+        const memberList = Array.isArray(data) ? data : (data.members || []);
+        setMembers(memberList);
         setMembersLoading(false);
-        // Default: select self — the first load with no userId will default to current user on the API side
       })
       .catch(() => setMembersLoading(false));
   }, []);
