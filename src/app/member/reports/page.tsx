@@ -16,7 +16,6 @@ import {
 import { formatDate } from "@/lib/format";
 import type { Installment } from "@/types/models";
 import DownloadDropdown from "@/components/DownloadDropdown";
-import { downloadPremiumPDF, downloadLoanPDF, downloadPaymentsPDF } from "@/lib/pdf-reports";
 
 interface MemberListItem {
   id: string;
@@ -168,19 +167,22 @@ export default function MemberReportsPage() {
     downloadCSV(headers + rows, `Loan_${loan.customId}_Schedule.csv`);
   };
 
-  // PDF generators (wrappers)
-  const handlePremiumPDF = () => {
+  // PDF generators (dynamic import to avoid SSR issues)
+  const handlePremiumPDF = async () => {
     if (!report) return;
+    const { downloadPremiumPDF } = await import("@/lib/pdf-reports");
     downloadPremiumPDF(report.premiums, report.summary, report.targetUser.username, report.targetUser.name);
   };
 
-  const handlePaymentsPDF = () => {
+  const handlePaymentsPDF = async () => {
     if (!report) return;
+    const { downloadPaymentsPDF } = await import("@/lib/pdf-reports");
     downloadPaymentsPDF(report.paidInstallments, report.summary, report.targetUser.username, report.targetUser.name);
   };
 
-  const handleLoanPDF = (loan: LoanRow) => {
+  const handleLoanPDF = async (loan: LoanRow) => {
     if (!report) return;
+    const { downloadLoanPDF } = await import("@/lib/pdf-reports");
     downloadLoanPDF(loan, report.summary, report.targetUser.username, report.targetUser.name);
   };
 

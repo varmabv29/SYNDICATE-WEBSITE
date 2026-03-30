@@ -1,5 +1,3 @@
-"use client";
-
 import { formatDate } from "@/lib/format";
 
 // Dynamic import helper — only loads jsPDF in the browser
