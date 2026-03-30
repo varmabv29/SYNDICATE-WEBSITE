@@ -18,6 +18,8 @@ import {
 } from "lucide-react";
 import { formatDate } from "@/lib/format";
 import type { UserInfo, Installment } from "@/types/models";
+import DownloadDropdown from "@/components/DownloadDropdown";
+import { downloadPremiumPDF, downloadLoanPDF, downloadPaymentsPDF } from "@/lib/pdf-reports";
 
 interface PremiumRow {
   id: string;
@@ -117,7 +119,18 @@ export default function AdminReportsPage() {
     }
   }, [selectedUserId, startDate, endDate, fetchReport]);
 
-  // CSV Downloaders
+  // ─── Download Helpers ───
+  const downloadCSV = (content: string, filename: string) => {
+    const blob = new Blob([content], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
+  // CSV generators
   const downloadPremiumCSV = () => {
     if (!report) return;
     let runningTotal = 0;
@@ -157,14 +170,20 @@ export default function AdminReportsPage() {
     downloadCSV(headers + rows, `Loan_${loan.customId}_Schedule.csv`);
   };
 
-  const downloadCSV = (content: string, filename: string) => {
-    const blob = new Blob([content], { type: "text/csv" });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    a.click();
-    window.URL.revokeObjectURL(url);
+  // PDF generators (wrappers)
+  const handlePremiumPDF = () => {
+    if (!report) return;
+    downloadPremiumPDF(report.premiums, report.summary, report.targetUser.username, report.targetUser.name);
+  };
+
+  const handlePaymentsPDF = () => {
+    if (!report) return;
+    downloadPaymentsPDF(report.paidInstallments, report.summary, report.targetUser.username, report.targetUser.name);
+  };
+
+  const handleLoanPDF = (loan: LoanRow) => {
+    if (!report) return;
+    downloadLoanPDF(loan, report.summary, report.targetUser.username, report.targetUser.name);
   };
 
   const tabs: { key: TabKey; label: string; icon: typeof CreditCard }[] = [
@@ -318,14 +337,12 @@ export default function AdminReportsPage() {
                   <span className="text-sm font-medium text-slate-600">
                     {report.premiums.length} premium record(s) found
                   </span>
-                  <button
-                    onClick={downloadPremiumCSV}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
+                  <DownloadDropdown
+                    onDownloadCSV={downloadPremiumCSV}
+                    onDownloadPDF={handlePremiumPDF}
                     disabled={report.premiums.length === 0}
-                  >
-                    <Download className="w-3.5 h-3.5" />
-                    Download CSV
-                  </button>
+                    color="emerald"
+                  />
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-sm">
@@ -462,17 +479,13 @@ export default function AdminReportsPage() {
                                   ₹{remainingBal.toFixed(0)}
                                 </span>
                               </div>
-                              <div className="flex justify-end">
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    downloadLoanCSV(loan);
-                                  }}
-                                  className="p-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition"
-                                  title="Download Schedule CSV"
-                                >
-                                  <Download className="w-4 h-4" />
-                                </button>
+                              <div className="flex justify-end" onClick={(e) => e.stopPropagation()}>
+                                <DownloadDropdown
+                                  onDownloadCSV={() => downloadLoanCSV(loan)}
+                                  onDownloadPDF={() => handleLoanPDF(loan)}
+                                  color="indigo"
+                                  compact
+                                />
                               </div>
                             </div>
                           </div>
@@ -591,14 +604,12 @@ export default function AdminReportsPage() {
                   <span className="text-sm font-medium text-slate-600">
                     {report.paidInstallments.length} payment(s) found
                   </span>
-                  <button
-                    onClick={downloadPaymentsCSV}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors"
+                  <DownloadDropdown
+                    onDownloadCSV={downloadPaymentsCSV}
+                    onDownloadPDF={handlePaymentsPDF}
                     disabled={report.paidInstallments.length === 0}
-                  >
-                    <Download className="w-3.5 h-3.5" />
-                    Download CSV
-                  </button>
+                    color="violet"
+                  />
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-sm">
