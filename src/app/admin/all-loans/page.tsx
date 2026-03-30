@@ -3,15 +3,14 @@
 import { useState, useEffect } from "react";
 import { Banknote, ChevronDown, ChevronRight, CheckCircle2 } from "lucide-react";
 import { formatDate } from "@/lib/format";
+import type { Loan, Installment } from "@/types/models";
 
 export default function AdminGroupLoansPage() {
-  const [loans, setLoans] = useState<any[]>([]);
+  const [loans, setLoans] = useState<Loan[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedLoanId, setExpandedLoanId] = useState<string | null>(null);
 
   useEffect(() => {
-    // Reusing the member endpoint which fetches all group loans safely for session users
-    // Alternatively, we can use the admin/loans GET endpoint which returns the same data
     fetch("/api/admin/loans")
       .then(res => res.json())
       .then(data => {
@@ -49,11 +48,11 @@ export default function AdminGroupLoansPage() {
         ) : (
           <div className="divide-y divide-slate-200">
             {loans.map(loan => {
-              const paidMonths = loan.installments.filter((i: any) => i.status === "PAID").length;
+              const paidMonths = loan.installments.filter((i: Installment) => i.status === "PAID").length;
               const totalMonths = loan.installments.length;
               const remainingBalance = loan.installments
-                .filter((i: any) => i.status === "PENDING")
-                .reduce((sum: number, i: any) => sum + i.amountDue, 0);
+                .filter((i: Installment) => i.status === "PENDING")
+                .reduce((sum: number, i: Installment) => sum + i.amountDue, 0);
 
               const isExpanded = expandedLoanId === loan.id;
 
@@ -101,7 +100,7 @@ export default function AdminGroupLoansPage() {
                     </div>
                   </div>
 
-                  {/* Expanded Schedule Schedule */}
+                  {/* Expanded Schedule */}
                   {isExpanded && (
                     <div className="bg-slate-50 border-t border-slate-100 p-4 pl-4 md:pl-12">
                       <h4 className="text-sm font-semibold text-slate-800 mb-3 px-2">Month-Wise Repayment Schedule:</h4>
@@ -121,7 +120,7 @@ export default function AdminGroupLoansPage() {
                           <tbody className="divide-y divide-slate-100">
                             {(() => {
                               let currentBalance = loan.principalAmount;
-                              return loan.installments.map((inst: any) => {
+                              return loan.installments.map((inst: Installment) => {
                                 const opening = currentBalance;
                                 const closing = opening - inst.principalDue;
                                 currentBalance = closing;

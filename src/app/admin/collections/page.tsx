@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { HandCoins, Save, CalendarDays, CheckCircle2 } from "lucide-react";
+import type { UserInfo } from "@/types/models";
 
 interface MemberEntry {
   userId: string;
@@ -32,8 +33,8 @@ export default function BulkCollectionsPage() {
         return fetch("/api/admin/users")
           .then(res => res.json())
           .then(users => {
-            const members = users.filter((u: any) => u.role === "MEMBER");
-            const initialEntries = members.map((m: any) => ({
+            const members = users.filter((u: UserInfo) => u.role === "MEMBER");
+            const initialEntries = members.map((m: UserInfo) => ({
               userId: m.id,
               name: m.name || "",
               username: m.username,
@@ -94,8 +95,9 @@ export default function BulkCollectionsPage() {
         const errData = await res.json();
         alert(`Error: ${errData.error || "Failed to process bulk collection"}`);
       }
-    } catch (err: any) {
-      alert(`Network error: ${err.message}`);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Unknown error';
+      alert(`Network error: ${message}`);
     } finally {
       setSubmitting(false);
     }

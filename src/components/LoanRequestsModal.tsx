@@ -1,8 +1,20 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { X, Send, AlertCircle, Trash2 } from "lucide-react";
 import { formatDate } from "@/lib/format";
+
+interface LoanRequest {
+  id: string;
+  userId: string;
+  amount: number;
+  monthYear: string;
+  durationMonths: number;
+  priority: string;
+  remarks: string;
+  createdAt: string;
+  user: { name: string; username: string };
+}
 
 export default function LoanRequestsModal({ 
   isOpen, 
@@ -11,11 +23,11 @@ export default function LoanRequestsModal({
   isOpen: boolean; 
   onClose: () => void;
 }) {
-  const [requests, setRequests] = useState<any[]>([]);
+  const [requests, setRequests] = useState<LoanRequest[]>([]);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchRequests = () => {
+  const fetchRequests = useCallback(() => {
     setLoading(true);
     fetch("/api/shared/loan-requests")
       .then(res => res.json())
@@ -29,19 +41,19 @@ export default function LoanRequestsModal({
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  };
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
       fetchRequests();
     }
-  }, [isOpen]);
+  }, [isOpen, fetchRequests]);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this loan request?")) return;
     
     // Optimistic UI update
-    setRequests(requests.filter(r => r.id !== id));
+    setRequests(prev => prev.filter(r => r.id !== id));
     
     const res = await fetch(`/api/member/loan-requests/${id}`, {
       method: "DELETE"
@@ -51,9 +63,6 @@ export default function LoanRequestsModal({
       const data = await res.json().catch(() => ({}));
       alert(`Failed to delete request: ${data.error || 'Unknown error'}`);
       fetchRequests(); // Revert
-    } else {
-      // Reload dashboard data seamlessly if on member dashboard
-      // Not perfect cross-component state, but forces an occasional refresh or lets the counts drift until next natural refresh
     }
   };
 
@@ -123,7 +132,7 @@ export default function LoanRequestsModal({
                     </span>
                     {req.remarks && (
                       <span className="text-sm text-slate-600 italic border-l-2 border-slate-200 pl-3">
-                        "{req.remarks}"
+                        &ldquo;{req.remarks}&rdquo;
                       </span>
                     )}
                   </div>

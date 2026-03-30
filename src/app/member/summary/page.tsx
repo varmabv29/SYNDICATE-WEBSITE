@@ -13,13 +13,6 @@ export default async function MemberSyndicateSummaryPage() {
   const totalCollections = premiums._sum.amount || 0;
 
   const activeLoansCount = await prisma.loan.count({ where: { status: "ACTIVE" } });
-  const loans = await prisma.loan.aggregate({ _sum: { principalAmount: true }, where: { status: "ACTIVE" } });
-  const activeLoansAmount = loans._sum.principalAmount || 0;
-
-  const pendingInstallments = await prisma.installment.aggregate({
-    _sum: { amountDue: true },
-    where: { status: "PENDING" }
-  });
 
   const allLoans = await prisma.loan.aggregate({ _sum: { principalAmount: true } });
   const totalDisbursed = allLoans._sum.principalAmount || 0;
@@ -93,7 +86,7 @@ export default async function MemberSyndicateSummaryPage() {
       <div className="mt-8 bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
         <h2 className="text-lg font-semibold text-slate-900 mb-4">About Group Funds</h2>
         <p className="text-slate-600">
-          This dashboard shows a real-time global summary of the Master Minds Syndicate's financial standing, including total premiums collected, expenditures deducted, and loans disbursed to all members.
+          This dashboard shows a real-time global summary of the Master Minds Syndicate&apos;s financial standing, including total premiums collected, expenditures deducted, and loans disbursed to all members.
         </p>
       </div>
     </div>

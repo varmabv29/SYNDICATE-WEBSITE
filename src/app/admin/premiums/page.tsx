@@ -3,10 +3,11 @@
 import { useState, useEffect } from "react";
 import { PlusCircle, Search } from "lucide-react";
 import { formatDate } from "@/lib/format";
+import type { PremiumRecord, UserInfo } from "@/types/models";
 
 export default function PremiumsManagerPage() {
-  const [premiums, setPremiums] = useState<any[]>([]);
-  const [users, setUsers] = useState<any[]>([]);
+  const [premiums, setPremiums] = useState<PremiumRecord[]>([]);
+  const [users, setUsers] = useState<UserInfo[]>([]);
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({ userId: "", amount: "", datePaid: "" });
   const [search, setSearch] = useState("");
@@ -18,7 +19,7 @@ export default function PremiumsManagerPage() {
       fetch("/api/admin/users")
     ]);
     if (premRes.ok) setPremiums(await premRes.json());
-    if (userRes.ok) setUsers((await userRes.json()).filter((u: any) => u.role === "MEMBER"));
+    if (userRes.ok) setUsers((await userRes.json()).filter((u: UserInfo) => u.role === "MEMBER"));
     setLoading(false);
   };
 
@@ -41,7 +42,7 @@ export default function PremiumsManagerPage() {
     }
   };
 
-  const filtered = premiums.filter((p: any) => 
+  const filtered = premiums.filter((p: PremiumRecord) => 
     p.user.name.toLowerCase().includes(search.toLowerCase()) || 
     p.user.username.toLowerCase().includes(search.toLowerCase())
   );
@@ -67,7 +68,7 @@ export default function PremiumsManagerPage() {
                   <label className="block text-sm font-medium text-slate-700 mb-1">Select Member</label>
                   <select required className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all bg-white" value={formData.userId} onChange={e => setFormData({...formData, userId: e.target.value})}>
                     <option value="" disabled>Choose a member...</option>
-                    {users.map((u: any) => (
+                    {users.map((u: UserInfo) => (
                       <option key={u.id} value={u.id}>{u.name} (@{u.username})</option>
                     ))}
                   </select>
@@ -119,7 +120,7 @@ export default function PremiumsManagerPage() {
                 <tbody className="divide-y divide-slate-100">
                   {loading ? (
                     <tr><td colSpan={4} className="p-4 text-center text-slate-500">Loading premiums...</td></tr>
-                  ) : filtered.map((p: any) => (
+                  ) : filtered.map((p: PremiumRecord) => (
                     <tr key={p.id} className="hover:bg-slate-50 transition-colors">
                       <td className="p-4">
                         <div className="font-medium text-slate-900">{p.user.name}</div>

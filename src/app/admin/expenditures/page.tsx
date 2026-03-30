@@ -3,9 +3,10 @@
 import { useState, useEffect } from "react";
 import { Receipt, Trash2, Pencil, X, Check } from "lucide-react";
 import { formatDate } from "@/lib/format";
+import type { Expenditure } from "@/types/models";
 
 export default function ExpendituresPage() {
-  const [expenditures, setExpenditures] = useState<any[]>([]);
+  const [expenditures, setExpenditures] = useState<Expenditure[]>([]);
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({ amount: "", date: "", monthYear: "", remarks: "" });
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -46,7 +47,7 @@ export default function ExpendituresPage() {
     }
   };
 
-  const startEdit = (exp: any) => {
+  const startEdit = (exp: Expenditure) => {
     setEditingId(exp.id);
     setEditData({
       amount: exp.amount.toString(),
@@ -142,7 +143,7 @@ export default function ExpendituresPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {expenditures.map((exp: any) => (
+                      {expenditures.map((exp: Expenditure) => (
                         <tr key={exp.id} className="hover:bg-slate-50 transition-colors">
                           {editingId === exp.id ? (
                             <>
@@ -173,7 +174,7 @@ export default function ExpendituresPage() {
                             <>
                               <td className="p-4 text-slate-900">{formatDate(exp.date)}</td>
                               <td className="p-4 text-slate-500 font-mono text-xs">{exp.monthYear}</td>
-                              <td className="p-4 text-slate-600 truncate max-w-[200px]" title={exp.remarks}>{exp.remarks || '-'}</td>
+                              <td className="p-4 text-slate-600 truncate max-w-[200px]" title={exp.remarks ?? undefined}>{exp.remarks || '-'}</td>
                               <td className="p-4 font-bold text-rose-600">₹{exp.amount.toFixed(2)}</td>
                               <td className="p-4 text-right">
                                 <div className="flex items-center justify-end gap-1">

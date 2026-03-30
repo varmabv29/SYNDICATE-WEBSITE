@@ -4,10 +4,11 @@ import { useState, useEffect } from "react";
 import { UserPlus, Shield, Pencil, Trash2, X } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { formatDate } from "@/lib/format";
+import type { UserInfo } from "@/types/models";
 
 export default function UserManagementPage() {
   const { data: session } = useSession();
-  const [users, setUsers] = useState<any[]>([]);
+  const [users, setUsers] = useState<UserInfo[]>([]);
   const [loading, setLoading] = useState(true);
   
   const [formData, setFormData] = useState({ id: "", name: "", username: "", password: "", role: "MEMBER" });
@@ -31,7 +32,7 @@ export default function UserManagementPage() {
     const method = isEditing ? "PUT" : "POST";
     
     // For editing, we don't strictly require password if it's empty (keep old)
-    const payload: any = { ...formData };
+    const payload: Record<string, string> = { ...formData };
     if (isEditing && !payload.password) delete payload.password;
 
     const res = await fetch(url, {
@@ -49,7 +50,7 @@ export default function UserManagementPage() {
     }
   };
 
-  const handleEdit = (user: any) => {
+  const handleEdit = (user: UserInfo) => {
     setIsEditing(true);
     setFormData({
       id: user.id,
@@ -61,7 +62,7 @@ export default function UserManagementPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleDelete = async (user: any) => {
+  const handleDelete = async (user: UserInfo) => {
     if (user.id === session?.user?.id) {
       alert("You cannot delete your own admin account.");
       return;

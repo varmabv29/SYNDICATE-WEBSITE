@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Users, CreditCard, Banknote, History, LogOut, TrendingUp, Settings, Search, Receipt, Menu, X } from "lucide-react";
+import { Users, CreditCard, Banknote, History, LogOut, TrendingUp, Settings, Search, Receipt, Menu, X, FileBarChart } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -22,6 +22,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { href: "/admin/loans", label: "Loans Manager", icon: Banknote },
     { href: "/admin/all-loans", label: "Group Loans", icon: Banknote },
     { href: "/admin/expenditures", label: "Expenditures", icon: Receipt },
+    { href: "/admin/reports", label: "Reports", icon: FileBarChart },
     { href: "/admin/settings", label: "Settings", icon: Settings },
   ];
 

@@ -1,19 +1,20 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { HandCoins, TrendingUp, CreditCard, History, CheckCircle2, Clock, CheckIcon, Search, Download, AlertTriangle, Receipt, Send, X } from "lucide-react";
+import { HandCoins, TrendingUp, CreditCard, History, Clock, CheckIcon, Search, Download, AlertTriangle, Receipt, Send, X } from "lucide-react";
 import { formatDate } from "@/lib/format";
 import LoanRequestsModal from "@/components/LoanRequestsModal";
+import type { MemberDashboardData, Loan, Installment } from "@/types/models";
 
 export default function MemberDashboardPage() {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<MemberDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"ACTIVE" | "SETTLED" | "FORECLOSED">("ACTIVE");
 
   // Summary filtering states
   const [startMonth, setStartMonth] = useState("");
   const [endMonth, setEndMonth] = useState("");
-  const [summaryData, setSummaryData] = useState<any>(null);
+  const [summaryData, setSummaryData] = useState<{ totalPremiums: number; totalPrincipalRepaid: number; totalInterestCollected: number } | null>(null);
   const [loadingSummary, setLoadingSummary] = useState(false);
 
   // Loan Request states
@@ -71,12 +72,12 @@ export default function MemberDashboardPage() {
 
 
 
-  const handleDownloadSchedule = (loan: any) => {
+  const handleDownloadSchedule = (loan: Loan) => {
     // Basic CSV download stub for the schedule
     const headers = "Month/Year,Opening Balance,Principal,Interest,Total EMI,Closing Balance,Status\n";
     let currentBalance = loan.principalAmount;
     
-    const rows = loan.installments.map((inst: any) => {
+    const rows = loan.installments.map((inst: Installment) => {
       const opening = currentBalance;
       const closing = opening - inst.principalDue;
       currentBalance = closing;
@@ -92,19 +93,19 @@ export default function MemberDashboardPage() {
   };
 
   if (loading) return <div className="p-8 text-center text-slate-500">Loading your financial dashboard...</div>;
-  if (!data || data.error) return <div className="p-8 text-center text-rose-500">Error loading dashboard</div>;
+  if (!data || 'error' in data) return <div className="p-8 text-center text-rose-500">Error loading dashboard</div>;
 
   const { userName, summary, premiums, loans } = data;
-  const filteredLoans = loans.filter((l: any) => l.status === filter || (filter === "SETTLED" && l.status === "FORECLOSED"));
+  const filteredLoans = loans.filter((l: Loan) => l.status === filter || (filter === "SETTLED" && l.status === "FORECLOSED"));
   
-  let upcomingInstallment = null;
-  const activeLoans = loans.filter((l: any) => l.status === "ACTIVE");
+  let upcomingInstallment: Installment | null = null;
+  const activeLoans = loans.filter((l: Loan) => l.status === "ACTIVE");
   let totalBorrowed = 0;
   let totalRepaid = 0;
 
-  activeLoans.forEach((loan: any) => {
+  activeLoans.forEach((loan: Loan) => {
     totalBorrowed += loan.principalAmount;
-    loan.installments.forEach((inst: any) => {
+    loan.installments.forEach((inst: Installment) => {
       if (inst.status === "PAID") totalRepaid += inst.principalDue;
     });
   });
@@ -112,9 +113,9 @@ export default function MemberDashboardPage() {
   const remainingBalance = totalBorrowed - totalRepaid;
 
   if (activeLoans.length > 0) {
-    const allPending = activeLoans.flatMap((l: any) => l.installments.filter((i: any) => i.status === "PENDING"));
+    const allPending = activeLoans.flatMap((l: Loan) => l.installments.filter((i: Installment) => i.status === "PENDING"));
     if (allPending.length > 0) {
-      allPending.sort((a: any, b: any) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+      allPending.sort((a: Installment, b: Installment) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
       upcomingInstallment = allPending[0];
     }
   }
@@ -288,7 +289,7 @@ export default function MemberDashboardPage() {
           <div className="p-0 overflow-y-auto w-full">
              {filteredLoans.length === 0 ? (
                <div className="p-6 text-center text-slate-500 font-medium">No loans found in this category.</div>
-             ) : filteredLoans.map((loan: any) => {
+             ) : filteredLoans.map((loan: Loan) => {
                let runningBalance = loan.principalAmount;
                return (
                  <div key={loan.id} className="border-b-4 border-slate-200 last:border-0">
@@ -325,7 +326,7 @@ export default function MemberDashboardPage() {
                          </tr>
                        </thead>
                        <tbody className="divide-y divide-slate-100">
-                         {loan.installments.map((inst: any) => {
+                         {loan.installments.map((inst: Installment) => {
                            const opening = runningBalance;
                            const closing = opening - inst.principalDue;
                            runningBalance = closing;

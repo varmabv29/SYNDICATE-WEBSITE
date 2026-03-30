@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import { checkAdmin } from "@/lib/auth-utils";
 import { redirect } from "next/navigation";
-import { Users, CreditCard, Banknote, TrendingUp, Wallet, AlertTriangle } from "lucide-react";
+import { Users, CreditCard, Banknote, Wallet } from "lucide-react";
 import AdminLoanRequestsCard from "@/components/AdminLoanRequestsCard";
 
 export default async function AdminDashboardPage() {
@@ -14,13 +14,6 @@ export default async function AdminDashboardPage() {
   const totalCollections = premiums._sum.amount || 0;
 
   const activeLoansCount = await prisma.loan.count({ where: { status: "ACTIVE" } });
-  const loans = await prisma.loan.aggregate({ _sum: { principalAmount: true }, where: { status: "ACTIVE" } });
-  const activeLoansAmount = loans._sum.principalAmount || 0;
-
-  const pendingInstallments = await prisma.installment.aggregate({
-    _sum: { amountDue: true },
-    where: { status: "PENDING" }
-  });
 
   const allLoans = await prisma.loan.aggregate({ _sum: { principalAmount: true } });
   const totalDisbursed = allLoans._sum.principalAmount || 0;

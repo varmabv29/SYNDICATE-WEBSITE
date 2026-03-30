@@ -3,15 +3,16 @@
 import { useState, useEffect } from "react";
 import { HandCoins, CheckCircle2, Trash2 } from "lucide-react";
 import { formatDate } from "@/lib/format";
+import type { Loan, Installment, UserInfo } from "@/types/models";
 
 export default function LoansManagerPage() {
-  const [loans, setLoans] = useState<any[]>([]);
-  const [users, setUsers] = useState<any[]>([]);
+  const [loans, setLoans] = useState<Loan[]>([]);
+  const [users, setUsers] = useState<UserInfo[]>([]);
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({ userId: "", principalAmount: "", interestRate: "1", durationMonths: "6", startDate: "" });
   const [filter, setFilter] = useState<"ACTIVE" | "SETTLED">("ACTIVE");
 
-  const filteredLoans = loans.filter((l: any) => l.status === filter);
+  const filteredLoans = loans.filter((l: Loan) => l.status === filter);
 
   const fetchData = async () => {
     setLoading(true);
@@ -20,7 +21,7 @@ export default function LoansManagerPage() {
       fetch("/api/admin/users")
     ]);
     if (loanRes.ok) setLoans(await loanRes.json());
-    if (userRes.ok) setUsers((await userRes.json()).filter((u: any) => u.role === "MEMBER"));
+    if (userRes.ok) setUsers((await userRes.json()).filter((u: UserInfo) => u.role === "MEMBER"));
     setLoading(false);
   };
 
@@ -90,7 +91,7 @@ export default function LoansManagerPage() {
                 <label className="block text-sm font-medium text-slate-700 mb-1">Select Member</label>
                 <select required className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white" value={formData.userId} onChange={e => setFormData({...formData, userId: e.target.value})}>
                   <option value="" disabled>Choose a member...</option>
-                  {users.map((u: any) => (
+                  {users.map((u: UserInfo) => (
                     <option key={u.id} value={u.id}>{u.name} (@{u.username})</option>
                   ))}
                 </select>
@@ -200,7 +201,7 @@ export default function LoansManagerPage() {
                   <tbody className="divide-y divide-slate-100">
                     {(() => {
                       let currentBalance = loan.principalAmount;
-                      return loan.installments.map((inst: any) => {
+                      return loan.installments.map((inst: Installment) => {
                         const opening = currentBalance;
                         const closing = opening - inst.principalDue;
                         currentBalance = closing;
