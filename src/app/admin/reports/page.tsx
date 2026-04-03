@@ -195,7 +195,7 @@ export default function AdminReportsPage() {
     { key: "premiums", label: "Premium Statement", icon: CreditCard },
     { key: "loans", label: "Loan Statement", icon: Banknote },
     { key: "payments", label: "Date-wise Payments", icon: CalendarCheck },
-    { key: "projected", label: "Projected Payments", icon: TrendingUp },
+    { key: "projected", label: "Future Payments", icon: TrendingUp },
     { key: "activity", label: "Financial Activity", icon: BarChart3 },
   ];
 
@@ -312,11 +312,10 @@ export default function AdminReportsPage() {
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 ${
-                    activeTab === tab.key
+                  className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 ${activeTab === tab.key
                       ? "bg-white shadow-sm text-slate-900"
                       : "text-slate-500 hover:text-slate-700"
-                  }`}
+                    }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
                   <span className="hidden sm:inline">{tab.label}</span>
@@ -450,13 +449,12 @@ export default function AdminReportsPage() {
                                 <h3 className="font-semibold text-slate-900 flex items-center gap-2">
                                   Loan {loan.customId}
                                   <span
-                                    className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${
-                                      loan.status === "ACTIVE"
+                                    className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${loan.status === "ACTIVE"
                                         ? "bg-amber-100 text-amber-700"
                                         : loan.status === "FORECLOSED"
-                                        ? "bg-rose-100 text-rose-700"
-                                        : "bg-emerald-100 text-emerald-700"
-                                    }`}
+                                          ? "bg-rose-100 text-rose-700"
+                                          : "bg-emerald-100 text-emerald-700"
+                                      }`}
                                   >
                                     {loan.status}
                                   </span>

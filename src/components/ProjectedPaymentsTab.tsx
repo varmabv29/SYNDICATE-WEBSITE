@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Fragment } from "react";
 import { TrendingUp, Users, Calendar, Search, AlertCircle } from "lucide-react";
 import DownloadDropdown from "@/components/DownloadDropdown";
 import { formatDate } from "@/lib/format";
@@ -203,9 +203,8 @@ export default function ProjectedPaymentsTab({ isAdmin, members = [] }: Props) {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {data.projections.map((p, idx) => (
-                <>
+                <Fragment key={p.userId}>
                   <tr
-                    key={p.userId}
                     className="hover:bg-slate-50 transition-colors cursor-pointer"
                     onClick={() => setExpandedUser(expandedUser === p.userId ? null : p.userId)}
                   >
@@ -252,7 +251,7 @@ export default function ProjectedPaymentsTab({ isAdmin, members = [] }: Props) {
                       </td>
                     </tr>
                   )}
-                </>
+                </Fragment>
               ))}
               {/* Grand Total Row */}
               <tr className="bg-slate-100/80 border-t-2 border-slate-300">
