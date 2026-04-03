@@ -189,7 +189,7 @@ export async function downloadPremiumPDF(
     },
     bodyStyles: { fontSize: 8, cellPadding: 2.5 },
     alternateRowStyles: { fillColor: ALT_ROW },
-    styles: { lineColor: BORDER_COLOR, lineWidth: 0.3 },
+    styles: { lineColor: BORDER_COLOR, lineWidth: 0.3, overflow: "linebreak", cellWidth: "wrap" },
     columnStyles: {
       0: { halign: "center", cellWidth: 12 },
       2: { halign: "right" },
@@ -293,7 +293,7 @@ export async function downloadLoanPDF(
     },
     bodyStyles: { fontSize: 8, cellPadding: 2.5 },
     alternateRowStyles: { fillColor: ALT_ROW },
-    styles: { lineColor: BORDER_COLOR, lineWidth: 0.3 },
+    styles: { lineColor: BORDER_COLOR, lineWidth: 0.3, overflow: "linebreak", cellWidth: "wrap" },
     columnStyles: {
       1: { halign: "right" },
       2: { halign: "right" },
@@ -379,7 +379,7 @@ export async function downloadPaymentsPDF(
     },
     bodyStyles: { fontSize: 8, cellPadding: 2.5 },
     alternateRowStyles: { fillColor: ALT_ROW },
-    styles: { lineColor: BORDER_COLOR, lineWidth: 0.3 },
+    styles: { lineColor: BORDER_COLOR, lineWidth: 0.3, overflow: "linebreak", cellWidth: "wrap" },
     columnStyles: {
       0: { halign: "center", cellWidth: 12 },
       4: { halign: "right" },
@@ -422,4 +422,266 @@ export async function downloadPaymentsPDF(
   }
 
   doc.save(`Payment_Statement_${username}.pdf`);
+}
+
+// ─── Projected Payments PDF ───
+interface ProjectionRow {
+  memberName: string;
+  username: string;
+  baseContribution: number;
+  loanInstallmentPrincipal: number;
+  accruedInterest: number;
+  totalDue: number;
+  loanBreakdown: {
+    loanId: string;
+    principalDue: number;
+    interestDue: number;
+    emiDue: number;
+  }[];
+}
+
+interface ProjectedGrandTotal {
+  baseContribution: number;
+  loanInstallmentPrincipal: number;
+  accruedInterest: number;
+  totalDue: number;
+}
+
+export async function downloadProjectedPDF(
+  projections: ProjectionRow[],
+  grandTotal: ProjectedGrandTotal,
+  targetMonthYear: string,
+  isAllMembers: boolean
+) {
+  const { jsPDF, autoTable } = await loadPdfLibs();
+  const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+
+  addHeader(
+    doc,
+    `Projected Payments — ${targetMonthYear}`,
+    isAllMembers ? "All Members Summary" : `Member: ${projections[0]?.memberName || "N/A"}`
+  );
+
+  let y = 36;
+
+  // Info bar
+  const pageW = doc.internal.pageSize.getWidth();
+  doc.setFillColor(248, 250, 252);
+  doc.setDrawColor(...BORDER_COLOR);
+  doc.roundedRect(14, y, pageW - 28, 14, 3, 3, "FD");
+
+  const infoItems = [
+    { label: "Target Month", value: targetMonthYear },
+    { label: "Members", value: String(projections.length) },
+    { label: "Total Base", value: `₹${grandTotal.baseContribution.toFixed(0)}` },
+    { label: "Total Principal", value: `₹${grandTotal.loanInstallmentPrincipal.toFixed(0)}` },
+    { label: "Total Interest", value: `₹${grandTotal.accruedInterest.toFixed(0)}` },
+    { label: "Grand Total", value: `₹${grandTotal.totalDue.toFixed(0)}` },
+  ];
+
+  const infoColW = (pageW - 28) / infoItems.length;
+  infoItems.forEach((item, i) => {
+    const x = 14 + i * infoColW + infoColW / 2;
+    doc.setFontSize(6);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(100, 116, 139);
+    doc.text(item.label.toUpperCase(), x, y + 5, { align: "center" });
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(15, 23, 42);
+    doc.text(item.value, x, y + 11, { align: "center" });
+  });
+
+  y += 20;
+
+  const tableData = projections.map((p, idx) => [
+    String(idx + 1),
+    p.memberName,
+    `₹${p.baseContribution.toFixed(2)}`,
+    `₹${p.loanInstallmentPrincipal.toFixed(2)}`,
+    `₹${p.accruedInterest.toFixed(2)}`,
+    `₹${p.totalDue.toFixed(2)}`,
+  ]);
+
+  // Grand total row
+  tableData.push([
+    "",
+    "GRAND TOTAL",
+    `₹${grandTotal.baseContribution.toFixed(2)}`,
+    `₹${grandTotal.loanInstallmentPrincipal.toFixed(2)}`,
+    `₹${grandTotal.accruedInterest.toFixed(2)}`,
+    `₹${grandTotal.totalDue.toFixed(2)}`,
+  ]);
+
+  autoTable(doc, {
+    startY: y,
+    head: [["#", "Member Name", "Base Contribution (₹)", "Loan Principal (₹)", "Interest (₹)", "Total Due (₹)"]],
+    body: tableData,
+    theme: "grid",
+    headStyles: {
+      fillColor: HEADER_BG,
+      textColor: [255, 255, 255],
+      fontStyle: "bold",
+      fontSize: 8,
+      cellPadding: 3,
+    },
+    bodyStyles: { fontSize: 8, cellPadding: 2.5 },
+    alternateRowStyles: { fillColor: ALT_ROW },
+    styles: { lineColor: BORDER_COLOR, lineWidth: 0.3, overflow: "linebreak", cellWidth: "wrap" },
+    columnStyles: {
+      0: { halign: "center", cellWidth: 12 },
+      2: { halign: "right" },
+      3: { halign: "right" },
+      4: { halign: "right" },
+      5: { halign: "right", fontStyle: "bold" },
+    },
+    margin: { left: 14, right: 14 },
+    didParseCell: (data: any) => {
+      // Bold the grand total row
+      if (data.section === "body" && data.row.index === tableData.length - 1) {
+        data.cell.styles.fontStyle = "bold";
+        data.cell.styles.fillColor = [241, 245, 249];
+      }
+    },
+  });
+
+  // Footer
+  const pageCount = doc.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.setFontSize(7);
+    doc.setTextColor(148, 163, 184);
+    doc.text(
+      `Page ${i} of ${pageCount}`,
+      doc.internal.pageSize.getWidth() / 2,
+      doc.internal.pageSize.getHeight() - 8,
+      { align: "center" }
+    );
+  }
+
+  doc.save(`Projected_Payments_${targetMonthYear}.pdf`);
+}
+
+// ─── Financial Activity PDF ───
+interface ActivityRow {
+  type: string;
+  date?: string;
+  amount?: number;
+  totalAmount?: number;
+  memberName?: string;
+  username?: string;
+  description?: string;
+  count?: number;
+}
+
+export async function downloadActivityPDF(
+  results: ActivityRow[],
+  grandTotal: number,
+  viewMode: string,
+  types: string[]
+) {
+  const { jsPDF, autoTable } = await loadPdfLibs();
+  const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+
+  addHeader(
+    doc,
+    "Financial Activity Report",
+    `View: ${viewMode === "aggregated" ? "Aggregated" : "Individual"} • Types: ${types.join(", ")}`
+  );
+
+  let y = 36;
+
+  if (viewMode === "aggregated") {
+    const tableData = results.map((r) => [
+      r.type,
+      String(r.count || 0),
+      `₹${(r.totalAmount || 0).toFixed(2)}`,
+    ]);
+
+    tableData.push(["GRAND TOTAL", "", `₹${grandTotal.toFixed(2)}`]);
+
+    autoTable(doc, {
+      startY: y,
+      head: [["Transaction Type", "Count", "Total Amount (₹)"]],
+      body: tableData,
+      theme: "grid",
+      headStyles: {
+        fillColor: HEADER_BG,
+        textColor: [255, 255, 255],
+        fontStyle: "bold",
+        fontSize: 9,
+        cellPadding: 4,
+      },
+      bodyStyles: { fontSize: 9, cellPadding: 3 },
+      alternateRowStyles: { fillColor: ALT_ROW },
+      styles: { lineColor: BORDER_COLOR, lineWidth: 0.3, overflow: "linebreak", cellWidth: "wrap" },
+      columnStyles: {
+        2: { halign: "right", fontStyle: "bold" },
+      },
+      margin: { left: 14, right: 14 },
+      didParseCell: (data: any) => {
+        if (data.section === "body" && data.row.index === tableData.length - 1) {
+          data.cell.styles.fontStyle = "bold";
+          data.cell.styles.fillColor = [241, 245, 249];
+        }
+      },
+    });
+  } else {
+    const tableData = results.map((r, idx) => [
+      String(idx + 1),
+      formatDate(r.date || null),
+      r.type,
+      r.memberName || "-",
+      r.description || "-",
+      `₹${(r.amount || 0).toFixed(2)}`,
+    ]);
+
+    autoTable(doc, {
+      startY: y,
+      head: [["#", "Date", "Type", "Member", "Description", "Amount (₹)"]],
+      body: tableData,
+      theme: "grid",
+      headStyles: {
+        fillColor: HEADER_BG,
+        textColor: [255, 255, 255],
+        fontStyle: "bold",
+        fontSize: 8,
+        cellPadding: 3,
+      },
+      bodyStyles: { fontSize: 8, cellPadding: 2.5 },
+      alternateRowStyles: { fillColor: ALT_ROW },
+      styles: { lineColor: BORDER_COLOR, lineWidth: 0.3, overflow: "linebreak", cellWidth: "wrap" },
+      columnStyles: {
+        0: { halign: "center", cellWidth: 12 },
+        5: { halign: "right", fontStyle: "bold" },
+      },
+      margin: { left: 14, right: 14 },
+    });
+
+    // Add totals
+    const finalY = (doc as any).lastAutoTable?.finalY || y + 20;
+    doc.setFillColor(241, 245, 249);
+    doc.rect(14, finalY, doc.internal.pageSize.getWidth() - 28, 8, "F");
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(15, 23, 42);
+    doc.text("GRAND TOTAL:", 20, finalY + 5.5);
+    doc.text(`₹${grandTotal.toFixed(2)}`, doc.internal.pageSize.getWidth() - 14, finalY + 5.5, { align: "right" });
+  }
+
+  // Footer
+  const pageCount = doc.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.setFontSize(7);
+    doc.setTextColor(148, 163, 184);
+    doc.text(
+      `Page ${i} of ${pageCount}`,
+      doc.internal.pageSize.getWidth() / 2,
+      doc.internal.pageSize.getHeight() - 8,
+      { align: "center" }
+    );
+  }
+
+  doc.save(`Financial_Activity_Report.pdf`);
 }

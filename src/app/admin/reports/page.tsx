@@ -15,10 +15,13 @@ import {
   TrendingUp,
   IndianRupee,
   Filter,
+  BarChart3,
 } from "lucide-react";
 import { formatDate } from "@/lib/format";
 import type { UserInfo, Installment } from "@/types/models";
 import DownloadDropdown from "@/components/DownloadDropdown";
+import ProjectedPaymentsTab from "@/components/ProjectedPaymentsTab";
+import FinancialActivityTab from "@/components/FinancialActivityTab";
 
 interface PremiumRow {
   id: string;
@@ -68,7 +71,7 @@ interface ReportData {
   paidInstallments: PaidInstallmentRow[];
 }
 
-type TabKey = "premiums" | "loans" | "payments";
+type TabKey = "premiums" | "loans" | "payments" | "projected" | "activity";
 
 export default function AdminReportsPage() {
   const [members, setMembers] = useState<UserInfo[]>([]);
@@ -192,6 +195,8 @@ export default function AdminReportsPage() {
     { key: "premiums", label: "Premium Statement", icon: CreditCard },
     { key: "loans", label: "Loan Statement", icon: Banknote },
     { key: "payments", label: "Date-wise Payments", icon: CalendarCheck },
+    { key: "projected", label: "Projected Payments", icon: TrendingUp },
+    { key: "activity", label: "Financial Activity", icon: BarChart3 },
   ];
 
   return (
@@ -677,6 +682,22 @@ export default function AdminReportsPage() {
                   </table>
                 </div>
               </div>
+            )}
+
+            {/* Projected Payments Tab */}
+            {activeTab === "projected" && (
+              <ProjectedPaymentsTab
+                isAdmin={true}
+                members={members.map((m) => ({ id: m.id, name: m.name, username: m.username }))}
+              />
+            )}
+
+            {/* Financial Activity Tab */}
+            {activeTab === "activity" && (
+              <FinancialActivityTab
+                isAdmin={true}
+                members={members.map((m) => ({ id: m.id, name: m.name, username: m.username }))}
+              />
             )}
           </>
         )}

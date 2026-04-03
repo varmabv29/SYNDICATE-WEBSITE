@@ -76,3 +76,17 @@ body {
   background-size: 200% 200%;
   animation: gradientShift 8s ease infinite;
 }
+
+/* Sticky table headers for scrollable report tables */
+.sticky-header {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.sticky-header thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: rgb(248 250 252); /* slate-50 */
+  box-shadow: 0 1px 0 0 rgb(226 232 240); /* slate-200 bottom border */
+}
