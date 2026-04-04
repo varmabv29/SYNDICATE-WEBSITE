@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   FileBarChart,
   Download,
@@ -22,6 +22,7 @@ import type { UserInfo, Installment } from "@/types/models";
 import DownloadDropdown from "@/components/DownloadDropdown";
 import ProjectedPaymentsTab from "@/components/ProjectedPaymentsTab";
 import FinancialActivityTab from "@/components/FinancialActivityTab";
+import type { MonthWisePaymentRow } from "@/lib/pdf-reports";
 
 interface PremiumRow {
   id: string;
@@ -91,9 +92,7 @@ export default function AdminReportsPage() {
       .then((users) => {
         const memberList = users.filter((u: UserInfo) => u.role === "MEMBER");
         setMembers(memberList);
-        if (memberList.length > 0) {
-          setSelectedUserId(memberList[0].id);
-        }
+        setSelectedUserId("all");
         setMembersLoading(false);
       })
       .catch(() => setMembersLoading(false));
@@ -114,6 +113,76 @@ export default function AdminReportsPage() {
       })
       .catch(() => setLoading(false));
   }, [selectedUserId, startDate, endDate]);
+
+  const monthWisePayments = useMemo(() => {
+    if (!report) return [];
+
+    const agg: Record<string, MonthWisePaymentRow> = {};
+
+    const getMonthKey = (dateStr: string) => {
+      const d = new Date(dateStr);
+      const mmm = d.toLocaleString("en-US", { month: "short" });
+      const yyyy = d.getFullYear();
+      return { label: `${mmm}-${yyyy}`, timestamp: new Date(yyyy, d.getMonth(), 1).getTime() };
+    };
+
+    report.premiums.forEach((p) => {
+      const { label, timestamp } = getMonthKey(p.datePaid);
+      const key = `${p.user.username}_${label}`;
+      if (!agg[key]) {
+        agg[key] = {
+          memberId: p.user.username,
+          memberName: p.user.name,
+          username: p.user.username,
+          monthYear: label,
+          dateObj: timestamp,
+          premium: 0,
+          principal: 0,
+          interest: 0,
+          total: 0,
+        };
+      }
+      agg[key].premium += p.amount;
+    });
+
+    report.paidInstallments.forEach((i) => {
+      const label = i.monthYear;
+      // Convert "Oct-2025" or similar format to valid timestamp.
+      const d = new Date(label.replace("-", " "));
+      const timestamp = isNaN(d.getTime()) ? 0 : new Date(d.getFullYear(), d.getMonth(), 1).getTime();
+      const key = `${i.loan.user.username}_${label}`;
+      if (!agg[key]) {
+        agg[key] = {
+          memberId: i.loan.user.username,
+          memberName: i.loan.user.name,
+          username: i.loan.user.username,
+          monthYear: label,
+          dateObj: timestamp,
+          premium: 0,
+          principal: 0,
+          interest: 0,
+          total: 0,
+        };
+      }
+      const prin = i.amountPaid - i.interestPaid;
+      agg[key].principal += prin;
+      agg[key].interest += i.interestPaid;
+    });
+
+    const results = Object.values(agg).map((row) => {
+      row.premium = Math.ceil(row.premium);
+      row.principal = Math.ceil(row.principal);
+      row.interest = Math.ceil(row.interest);
+      row.total = row.premium + row.principal + row.interest;
+      return row;
+    });
+
+    return results.sort((a, b) => {
+      if (a.memberName < b.memberName) return -1;
+      if (a.memberName > b.memberName) return 1;
+      return a.dateObj - b.dateObj;
+    });
+  }, [report]);
 
   useEffect(() => {
     if (selectedUserId) {
@@ -146,16 +215,15 @@ export default function AdminReportsPage() {
     downloadCSV(headers + rows, `Premium_Statement_${report.targetUser.username}.csv`);
   };
 
-  const downloadPaymentsCSV = () => {
-    if (!report) return;
-    const headers = "Paid Date,Loan ID,Month/Year,Principal Paid (₹),Interest Paid (₹),Total Paid (₹)\n";
-    const rows = report.paidInstallments
-      .map((i) => {
-        const principalPaid = i.amountPaid - i.interestPaid;
-        return `${formatDate(i.paidDate)},${i.loan.customId},${i.monthYear},${principalPaid.toFixed(2)},${i.interestPaid.toFixed(2)},${i.amountPaid.toFixed(2)}`;
+  const downloadMonthWiseCSV = () => {
+    if (!monthWisePayments.length) return;
+    const headers = "Member Name,Payment Month,Monthly Premium (₹),Loan Installment (₹),Interest Paid (₹),Total Paid (₹)\n";
+    const rows = monthWisePayments
+      .map((row) => {
+        return `${row.memberName},${row.monthYear},${row.premium.toFixed(2)},${row.principal.toFixed(2)},${row.interest.toFixed(2)},${row.total.toFixed(2)}`;
       })
       .join("\n");
-    downloadCSV(headers + rows, `Payment_Statement_${report.targetUser.username}.csv`);
+    downloadCSV(headers + rows, `Month_Wise_Payments_${report?.targetUser.username || "all"}.csv`);
   };
 
   const downloadLoanCSV = (loan: LoanRow) => {
@@ -179,10 +247,10 @@ export default function AdminReportsPage() {
     downloadPremiumPDF(report.premiums, report.summary, report.targetUser.username, report.targetUser.name);
   };
 
-  const handlePaymentsPDF = async () => {
+  const handleMonthWisePDF = async () => {
     if (!report) return;
-    const { downloadPaymentsPDF } = await import("@/lib/pdf-reports");
-    downloadPaymentsPDF(report.paidInstallments, report.summary, report.targetUser.username, report.targetUser.name);
+    const { downloadMonthWisePDF } = await import("@/lib/pdf-reports");
+    downloadMonthWisePDF(monthWisePayments, report.summary, report.targetUser.username, report.targetUser.name);
   };
 
   const handleLoanPDF = async (loan: LoanRow) => {
@@ -194,7 +262,7 @@ export default function AdminReportsPage() {
   const tabs: { key: TabKey; label: string; icon: typeof CreditCard }[] = [
     { key: "premiums", label: "Premium Statement", icon: CreditCard },
     { key: "loans", label: "Loan Statement", icon: Banknote },
-    { key: "payments", label: "Date-wise Payments", icon: CalendarCheck },
+    { key: "payments", label: "Month-wise Payments", icon: CalendarCheck },
     { key: "projected", label: "Future Payments", icon: TrendingUp },
     { key: "activity", label: "Financial Activity", icon: BarChart3 },
   ];
@@ -232,11 +300,14 @@ export default function AdminReportsPage() {
                 {membersLoading ? (
                   <option>Loading members...</option>
                 ) : (
-                  members.map((m) => (
-                    <option key={m.id} value={m.id}>
-                      {m.name} (@{m.username})
-                    </option>
-                  ))
+                  <>
+                    <option value="all">All Members</option>
+                    {members.map((m) => (
+                      <option key={m.id} value={m.id}>
+                        {m.name} (@{m.username})
+                      </option>
+                    ))}
+                  </>
                 )}
               </select>
             </div>
@@ -313,8 +384,8 @@ export default function AdminReportsPage() {
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
                   className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 ${activeTab === tab.key
-                      ? "bg-white shadow-sm text-slate-900"
-                      : "text-slate-500 hover:text-slate-700"
+                    ? "bg-white shadow-sm text-slate-900"
+                    : "text-slate-500 hover:text-slate-700"
                     }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
@@ -385,6 +456,11 @@ export default function AdminReportsPage() {
                                 </td>
                                 <td className="p-4 font-medium text-slate-800">
                                   {formatDate(p.datePaid)}
+                                  {selectedUserId === "all" && (
+                                    <div className="text-xs text-slate-500 font-normal mt-0.5">
+                                      {p.user.name}
+                                    </div>
+                                  )}
                                 </td>
                                 <td className="p-4 text-emerald-600 font-bold">
                                   ₹{p.amount.toFixed(2)}
@@ -448,12 +524,17 @@ export default function AdminReportsPage() {
                               <div>
                                 <h3 className="font-semibold text-slate-900 flex items-center gap-2">
                                   Loan {loan.customId}
+                                  {selectedUserId === "all" && (
+                                    <span className="text-sm font-normal text-slate-500">
+                                      ({loan.user.name})
+                                    </span>
+                                  )}
                                   <span
                                     className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${loan.status === "ACTIVE"
-                                        ? "bg-amber-100 text-amber-700"
-                                        : loan.status === "FORECLOSED"
-                                          ? "bg-rose-100 text-rose-700"
-                                          : "bg-emerald-100 text-emerald-700"
+                                      ? "bg-amber-100 text-amber-700"
+                                      : loan.status === "FORECLOSED"
+                                        ? "bg-rose-100 text-rose-700"
+                                        : "bg-emerald-100 text-emerald-700"
                                       }`}
                                   >
                                     {loan.status}
@@ -602,17 +683,17 @@ export default function AdminReportsPage() {
               </div>
             )}
 
-            {/* Date-wise Payments Tab */}
+            {/* Month-wise Payments Tab */}
             {activeTab === "payments" && (
               <div>
                 <div className="p-3 border-b border-slate-100 bg-violet-50/30 flex items-center justify-between">
                   <span className="text-sm font-medium text-slate-600">
-                    {report.paidInstallments.length} payment(s) found
+                    {monthWisePayments.length} monthly aggregate(s) found
                   </span>
                   <DownloadDropdown
-                    onDownloadCSV={downloadPaymentsCSV}
-                    onDownloadPDF={handlePaymentsPDF}
-                    disabled={report.paidInstallments.length === 0}
+                    onDownloadCSV={downloadMonthWiseCSV}
+                    onDownloadPDF={handleMonthWisePDF}
+                    disabled={monthWisePayments.length === 0}
                     color="violet"
                   />
                 </div>
@@ -621,60 +702,56 @@ export default function AdminReportsPage() {
                     <thead>
                       <tr className="border-b border-slate-200 text-xs font-bold text-slate-500 bg-slate-50/50 uppercase tracking-wider">
                         <th className="p-4">#</th>
-                        <th className="p-4">Paid Date</th>
-                        <th className="p-4">Loan ID</th>
-                        <th className="p-4">Month/Year</th>
-                        <th className="p-4">Principal (₹)</th>
-                        <th className="p-4">Interest (₹)</th>
+                        <th className="p-4">Member Name/ID</th>
+                        <th className="p-4">Payment Month</th>
+                        <th className="p-4">Monthly Premium (₹)</th>
+                        <th className="p-4">Loan Installment (₹)</th>
+                        <th className="p-4">Interest Paid (₹)</th>
                         <th className="p-4">Total Paid (₹)</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {report.paidInstallments.length === 0 ? (
+                      {monthWisePayments.length === 0 ? (
                         <tr>
                           <td
                             colSpan={7}
                             className="p-8 text-center text-slate-500"
                           >
-                            No paid instalments found for the selected
-                            filters.
+                            No payment records found for the selected filters.
                           </td>
                         </tr>
                       ) : (
-                        report.paidInstallments.map((inst, idx) => {
-                          const principalPaid =
-                            inst.amountPaid - inst.interestPaid;
-                          return (
-                            <tr
-                              key={inst.id}
-                              className="hover:bg-slate-50 transition-colors"
-                            >
-                              <td className="p-4 text-slate-400 font-mono text-xs">
-                                {idx + 1}
-                              </td>
-                              <td className="p-4 font-medium text-slate-800">
-                                {formatDate(inst.paidDate)}
-                              </td>
-                              <td className="p-4">
-                                <span className="inline-flex px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 text-xs font-bold">
-                                  {inst.loan.customId}
-                                </span>
-                              </td>
-                              <td className="p-4 text-slate-600">
-                                {inst.monthYear}
-                              </td>
-                              <td className="p-4 text-emerald-600 font-semibold">
-                                ₹{principalPaid.toFixed(2)}
-                              </td>
-                              <td className="p-4 text-rose-500 font-semibold">
-                                ₹{inst.interestPaid.toFixed(2)}
-                              </td>
-                              <td className="p-4 font-bold text-slate-900">
-                                ₹{inst.amountPaid.toFixed(2)}
-                              </td>
-                            </tr>
-                          );
-                        })
+                        monthWisePayments.map((row, idx) => (
+                          <tr
+                            key={`${row.username}-${row.monthYear}`}
+                            className="hover:bg-slate-50 transition-colors"
+                          >
+                            <td className="p-4 text-slate-400 font-mono text-xs">
+                              {idx + 1}
+                            </td>
+                            <td className="p-4 font-medium text-slate-800">
+                              {row.memberName}
+                              <div className="text-xs text-slate-500 font-normal">
+                                @{row.username}
+                              </div>
+                            </td>
+                            <td className="p-4 text-slate-600 font-medium">
+                              {row.monthYear}
+                            </td>
+                            <td className="p-4 text-emerald-600 font-medium">
+                              ₹{row.premium.toFixed(2)}
+                            </td>
+                            <td className="p-4 text-indigo-600 font-medium">
+                              ₹{row.principal.toFixed(2)}
+                            </td>
+                            <td className="p-4 text-rose-500 font-medium">
+                              ₹{row.interest.toFixed(2)}
+                            </td>
+                            <td className="p-4 font-bold text-slate-900">
+                              ₹{row.total.toFixed(2)}
+                            </td>
+                          </tr>
+                        ))
                       )}
                     </tbody>
                   </table>

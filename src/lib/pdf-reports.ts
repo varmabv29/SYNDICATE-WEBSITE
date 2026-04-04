@@ -57,6 +57,18 @@ interface PaidInstallmentRow {
   };
 }
 
+export interface MonthWisePaymentRow {
+  memberId: string;
+  memberName: string;
+  username: string;
+  monthYear: string;
+  dateObj: number;
+  premium: number;
+  principal: number;
+  interest: number;
+  total: number;
+}
+
 interface ReportSummary {
   totalPremiums: number;
   totalPrincipalPaid: number;
@@ -333,9 +345,9 @@ export async function downloadLoanPDF(
   doc.save(`Loan_${loan.customId}_Schedule.pdf`);
 }
 
-// ─── Date-wise Payments PDF ───
-export async function downloadPaymentsPDF(
-  paidInstallments: PaidInstallmentRow[],
+// ─── Month-wise Payments PDF ───
+export async function downloadMonthWisePDF(
+  monthWisePayments: MonthWisePaymentRow[],
   summary: ReportSummary,
   username: string,
   memberName: string
@@ -343,7 +355,7 @@ export async function downloadPaymentsPDF(
   const { jsPDF, autoTable } = await loadPdfLibs();
   const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
 
-  addHeader(doc, "Date-wise Payment Statement", `Member: ${memberName} (@${username})`);
+  addHeader(doc, "Month-wise Payment Statement", `Member: ${memberName} (@${username})`);
   let y = addSummaryBox(doc, summary, 34);
 
   doc.setFontSize(11);
@@ -352,22 +364,21 @@ export async function downloadPaymentsPDF(
   doc.text("Payment Records", 14, y);
   y += 4;
 
-  const tableData = paidInstallments.map((inst, idx) => {
-    const principalPaid = inst.amountPaid - inst.interestPaid;
+  const tableData = monthWisePayments.map((row, idx) => {
     return [
       String(idx + 1),
-      formatDate(inst.paidDate),
-      inst.loan.customId,
-      inst.monthYear,
-      `₹${principalPaid.toFixed(2)}`,
-      `₹${inst.interestPaid.toFixed(2)}`,
-      `₹${inst.amountPaid.toFixed(2)}`,
+      row.memberName,
+      row.monthYear,
+      `₹${row.premium.toFixed(2)}`,
+      `₹${row.principal.toFixed(2)}`,
+      `₹${row.interest.toFixed(2)}`,
+      `₹${row.total.toFixed(2)}`,
     ];
   });
 
   autoTable(doc, {
     startY: y,
-    head: [["#", "Paid Date", "Loan ID", "Month/Year", "Principal (₹)", "Interest (₹)", "Total Paid (₹)"]],
+    head: [["#", "Member Name", "Payment Month", "Monthly Premium (₹)", "Loan Installment (₹)", "Interest Paid (₹)", "Total Paid (₹)"]],
     body: tableData,
     theme: "grid",
     headStyles: {
@@ -382,6 +393,7 @@ export async function downloadPaymentsPDF(
     styles: { lineColor: BORDER_COLOR, lineWidth: 0.3, overflow: "linebreak", cellWidth: "wrap" },
     columnStyles: {
       0: { halign: "center", cellWidth: 12 },
+      3: { halign: "right" },
       4: { halign: "right" },
       5: { halign: "right" },
       6: { halign: "right", fontStyle: "bold" },
@@ -390,9 +402,10 @@ export async function downloadPaymentsPDF(
   });
 
   // Add totals row
-  const totalPrincipal = paidInstallments.reduce((s, i) => s + (i.amountPaid - i.interestPaid), 0);
-  const totalInterest = paidInstallments.reduce((s, i) => s + i.interestPaid, 0);
-  const totalAmount = paidInstallments.reduce((s, i) => s + i.amountPaid, 0);
+  const totalPremium = monthWisePayments.reduce((s, i) => s + i.premium, 0);
+  const totalPrincipal = monthWisePayments.reduce((s, i) => s + i.principal, 0);
+  const totalInterest = monthWisePayments.reduce((s, i) => s + i.interest, 0);
+  const totalAmount = monthWisePayments.reduce((s, i) => s + i.total, 0);
 
   // Get final Y from autoTable
   const finalY = (doc as any).lastAutoTable?.finalY || y + 20;
@@ -403,6 +416,7 @@ export async function downloadPaymentsPDF(
   doc.setFont("helvetica", "bold");
   doc.setTextColor(15, 23, 42);
   doc.text("TOTALS:", 20, finalY + 5.5);
+  doc.text(`₹${totalPremium.toFixed(2)}`, doc.internal.pageSize.getWidth() - 110, finalY + 5.5, { align: "right" });
   doc.text(`₹${totalPrincipal.toFixed(2)}`, doc.internal.pageSize.getWidth() - 80, finalY + 5.5, { align: "right" });
   doc.text(`₹${totalInterest.toFixed(2)}`, doc.internal.pageSize.getWidth() - 48, finalY + 5.5, { align: "right" });
   doc.text(`₹${totalAmount.toFixed(2)}`, doc.internal.pageSize.getWidth() - 14, finalY + 5.5, { align: "right" });
@@ -421,7 +435,7 @@ export async function downloadPaymentsPDF(
     );
   }
 
-  doc.save(`Payment_Statement_${username}.pdf`);
+  doc.save(`Month_Wise_Payments_${username}.pdf`);
 }
 
 // ─── Projected Payments PDF ───

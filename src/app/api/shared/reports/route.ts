@@ -13,6 +13,11 @@ export async function GET(req: NextRequest) {
   const startDate = searchParams.get("startDate");
   const endDate = searchParams.get("endDate");
 
+  const isAdmin = session.user.role === "ADMIN";
+  if (targetUserId === "all" && !isAdmin) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+  }
+
   try {
     // Build date filter
     const dateFilter: any = {};
@@ -27,7 +32,7 @@ export async function GET(req: NextRequest) {
     // 1. Premium Statement
     const premiums = await prisma.premium.findMany({
       where: {
-        userId: targetUserId,
+        ...(targetUserId === "all" ? {} : { userId: targetUserId }),
         ...(hasDateFilter ? { datePaid: dateFilter } : {}),
       },
       include: {
@@ -38,7 +43,7 @@ export async function GET(req: NextRequest) {
 
     // 2. Loan Statement — all loans for the user with installments
     const loans = await prisma.loan.findMany({
-      where: { userId: targetUserId },
+      where: targetUserId === "all" ? {} : { userId: targetUserId },
       include: {
         user: { select: { name: true, username: true } },
         installments: {
@@ -51,7 +56,7 @@ export async function GET(req: NextRequest) {
     // 3. Date-wise paid installments
     const paidInstallmentFilter: any = {
       status: "PAID",
-      loan: { userId: targetUserId },
+      ...(targetUserId === "all" ? {} : { loan: { userId: targetUserId } }),
     };
     if (hasDateFilter) {
       paidInstallmentFilter.paidDate = dateFilter;
@@ -78,13 +83,19 @@ export async function GET(req: NextRequest) {
     const totalEmiPaid = paidInstallments.reduce((sum, i) => sum + i.amountPaid, 0);
 
     // Get target user info
-    const targetUser = await prisma.user.findUnique({
-      where: { id: targetUserId },
-      select: { name: true, username: true },
-    });
+    let targetUser = { name: "All Members", username: "all_members" };
+    if (targetUserId !== "all") {
+      const user = await prisma.user.findUnique({
+        where: { id: targetUserId },
+        select: { name: true, username: true },
+      });
+      if (user) {
+        targetUser = { name: user.name || "Unknown", username: user.username };
+      }
+    }
 
     return NextResponse.json({
-      targetUser: targetUser || { name: "Unknown", username: "unknown" },
+      targetUser,
       summary: {
         totalPremiums,
         totalPrincipalPaid,
