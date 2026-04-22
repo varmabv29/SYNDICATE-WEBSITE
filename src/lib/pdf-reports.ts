@@ -716,3 +716,98 @@ export async function downloadActivityPDF(
 
   doc.save(`Financial_Activity_Report.pdf`);
 }
+
+// ─── Date-wise Payments PDF ───
+export async function downloadPaymentsPDF(
+  paidInstallments: PaidInstallmentRow[],
+  summary: ReportSummary,
+  username: string,
+  memberName: string
+) {
+  const { jsPDF, autoTable } = await loadPdfLibs();
+  const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+
+  addHeader(doc, "Date-wise Payment Statement", `Member: ${memberName} (@${username})`);
+  let y = addSummaryBox(doc, summary, 34);
+
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(15, 23, 42);
+  doc.text("Payment Records", 14, y);
+  y += 4;
+
+  const tableData = paidInstallments.map((inst, idx) => {
+    const principalPaid = inst.amountPaid - inst.interestPaid;
+    return [
+      String(idx + 1),
+      formatDate(inst.paidDate),
+      inst.loan.customId,
+      inst.monthYear,
+      `₹${principalPaid.toFixed(2)}`,
+      `₹${inst.interestPaid.toFixed(2)}`,
+      `₹${inst.amountPaid.toFixed(2)}`,
+    ];
+  });
+
+  autoTable(doc, {
+    startY: y,
+    head: [["#", "Paid Date", "Loan ID", "Month/Year", "Principal (₹)", "Interest (₹)", "Total Paid (₹)"]],
+    body: tableData,
+    theme: "grid",
+    headStyles: {
+      fillColor: HEADER_BG,
+      textColor: [255, 255, 255],
+      fontStyle: "bold",
+      fontSize: 8,
+      cellPadding: 3,
+      halign: "center",
+    },
+    bodyStyles: { fontSize: 8, cellPadding: 2.5, halign: "center" },
+    alternateRowStyles: { fillColor: ALT_ROW },
+    styles: { lineColor: BORDER_COLOR, lineWidth: 0.3, overflow: "linebreak", cellWidth: "wrap" },
+    columnStyles: {
+      0: { halign: "center", cellWidth: 12 },
+    },
+    margin: { left: 14, right: 14 },
+  });
+
+  // Add totals row
+  const totalPrincipal = paidInstallments.reduce((s, i) => s + (i.amountPaid - i.interestPaid), 0);
+  const totalInterest = paidInstallments.reduce((s, i) => s + i.interestPaid, 0);
+  const totalAmount = paidInstallments.reduce((s, i) => s + i.amountPaid, 0);
+
+  // Get final Y from autoTable
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const finalY = (doc as any).lastAutoTable?.finalY || y + 20;
+
+  doc.setFillColor(...BRAND_DARK);
+  doc.rect(14, finalY, doc.internal.pageSize.getWidth() - 28, 8, "F");
+  doc.setFontSize(8);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(255, 255, 255);
+  doc.text("TOTALS:", 20, finalY + 5.5);
+  doc.setTextColor(...ACCENT_GOLD);
+  doc.text(`₹${totalPrincipal.toFixed(2)}`, doc.internal.pageSize.getWidth() - 80, finalY + 5.5, { align: "right" });
+  doc.text(`₹${totalInterest.toFixed(2)}`, doc.internal.pageSize.getWidth() - 48, finalY + 5.5, { align: "right" });
+  doc.text(`₹${totalAmount.toFixed(2)}`, doc.internal.pageSize.getWidth() - 14, finalY + 5.5, { align: "right" });
+
+  // Footer
+  const pageCount = doc.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    const pageH = doc.internal.pageSize.getHeight();
+    const pgW = doc.internal.pageSize.getWidth();
+    doc.setFillColor(...BRAND_DARK);
+    doc.rect(0, pageH - 12, pgW, 12, "F");
+    doc.setFontSize(7);
+    doc.setTextColor(199, 210, 254);
+    doc.text(
+      `Page ${i} of ${pageCount}`,
+      pgW / 2,
+      pageH - 5,
+      { align: "center" }
+    );
+  }
+
+  doc.save(`Payment_Statement_${username}.pdf`);
+}
