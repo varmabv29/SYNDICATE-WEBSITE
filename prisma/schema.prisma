@@ -59,11 +59,12 @@ model Installment {
 }
 
 model Expenditure {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  amount    Float
-  date      DateTime @default(now())
-  monthYear String   // e.g., "2023-10"
-  remarks   String?
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  amount        Float
+  date          DateTime @default(now())
+  monthYear     String   // e.g., "2023-10"
+  remarks       String?
+  isChitPayment Boolean  @default(false)
 }
 
 model Setting {

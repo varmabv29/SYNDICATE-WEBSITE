@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import { checkAdmin } from "@/lib/auth-utils";
 import { redirect } from "next/navigation";
-import { Users, CreditCard, Banknote, Wallet } from "lucide-react";
+import { Users, CreditCard, Banknote, Wallet, PiggyBank } from "lucide-react";
 import AdminLoanRequestsCard from "@/components/AdminLoanRequestsCard";
 
 export default async function AdminDashboardPage() {
@@ -24,17 +24,19 @@ export default async function AdminDashboardPage() {
   });
   const totalRepaid = paidInstallments._sum.amountPaid || 0;
 
-  const expendituresData = await prisma.expenditure.aggregate({ _sum: { amount: true } });
-  const totalExpenditures = expendituresData._sum.amount || 0;
+  const expendituresData = await prisma.expenditure.findMany();
+  const totalExpenditures = expendituresData.filter(e => !e.isChitPayment).reduce((sum, e) => sum + e.amount, 0);
+  const totalChitContributions = expendituresData.filter(e => e.isChitPayment).reduce((sum, e) => sum + e.amount, 0);
 
   const pendingRequests = await prisma.loanRequest.count({ where: { status: "PENDING" } });
 
-  const cashInHand = totalCollections + totalRepaid - totalDisbursed - totalExpenditures;
+  const cashInHand = totalCollections + totalRepaid - totalDisbursed - totalExpenditures - totalChitContributions;
 
   const stats = [
     { label: "Total Members", value: totalUsers, icon: Users, color: "bg-blue-500" },
     { label: "Total Premiums", value: `₹${totalCollections.toFixed(2)}`, icon: CreditCard, color: "bg-emerald-500" },
     { label: "Total Expenditures", value: `₹${totalExpenditures.toFixed(2)}`, icon: Wallet, color: "bg-rose-500" },
+    { label: "Chit Contributions", value: `₹${totalChitContributions.toFixed(2)}`, icon: PiggyBank, color: "bg-amber-500" },
     { label: "Active Loans", value: activeLoansCount, icon: Banknote, color: "bg-purple-500" },
   ];
 
@@ -60,14 +62,14 @@ export default async function AdminDashboardPage() {
             </div>
             <div className="w-px bg-white/20"></div>
             <div className="flex flex-col">
-              <span className="text-indigo-200">Total Outflow(Loans + Exp)</span>
-              <span className="text-rose-300">₹{(totalDisbursed + totalExpenditures).toFixed(2)}</span>
+              <span className="text-indigo-200">Total Outflow(Loans + Exp + Chit)</span>
+              <span className="text-rose-300">₹{(totalDisbursed + totalExpenditures + totalChitContributions).toFixed(2)}</span>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         {stats.map((stat, i) => {
           const Icon = stat.icon;
           return (

@@ -9,6 +9,7 @@ interface MemberNAV {
   username: string;
   totalPremiumPaid: number;
   dividendEarned: number;
+  chitShare?: number;
   nav: number;
 }
 
@@ -17,6 +18,7 @@ export default function MemberDirectoryPage() {
     totalGroupInterest: number;
     totalMembers: number;
     dividendPerMember: number;
+    chitShare?: number;
     members: MemberNAV[];
   } | null>(null);
   const [loading, setLoading] = useState(true);
@@ -83,6 +85,7 @@ export default function MemberDirectoryPage() {
                   <th className="p-4 pl-6 font-bold">Member Name</th>
                   <th className="p-4 font-bold">Base Premium Paid</th>
                   <th className="p-4 font-bold text-emerald-600">+ Dividend Share</th>
+                  <th className="p-4 font-bold text-amber-600">+ Chit Savings</th>
                   <th className="p-4 pr-6 font-bold text-right text-indigo-700">Net Asset Value (NAV)</th>
                 </tr>
               </thead>
@@ -97,6 +100,7 @@ export default function MemberDirectoryPage() {
                     </td>
                     <td className="p-4 text-slate-600 font-medium">₹{member.totalPremiumPaid.toFixed(2)}</td>
                     <td className="p-4 text-emerald-600 font-medium">+ ₹{member.dividendEarned.toFixed(2)}</td>
+                    <td className="p-4 text-amber-600 font-medium">+ ₹{member.chitShare?.toFixed(2) || '0.00'}</td>
                     <td className="p-4 pr-6 text-right font-bold text-indigo-700 text-base">₹{member.nav.toFixed(2)}</td>
                   </tr>
                 ))}

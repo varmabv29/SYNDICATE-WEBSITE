@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, TrendingUp, Users, CreditCard, HandCoins, Calendar, Receipt } from "lucide-react";
+import { Search, TrendingUp, Users, CreditCard, HandCoins, Calendar, Receipt, PiggyBank } from "lucide-react";
 
 export default function AdminSummaryPage() {
   const [startMonth, setStartMonth] = useState("");
@@ -67,7 +67,7 @@ export default function AdminSummaryPage() {
             Calculating aggregated summary...
           </div>
         ) : summaryData ? (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-6 pt-2">
             
             <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-6">
               <div className="flex items-center gap-3 mb-2">
@@ -113,6 +113,17 @@ export default function AdminSummaryPage() {
               <p className="text-xs text-rose-600/80 mt-1">{summaryData.countExpenditures} recorded expenditures.</p>
             </div>
 
+            <div className="bg-amber-50 border border-amber-100 rounded-xl p-6">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-amber-200 text-amber-700 rounded-lg">
+                  <PiggyBank className="w-5 h-5" />
+                </div>
+                <div className="text-sm font-semibold text-amber-900">Total Chit Contributions</div>
+              </div>
+              <div className="text-3xl font-bold text-amber-700 mt-2">₹{summaryData.totalChitContributions.toFixed(2)}</div>
+              <p className="text-xs text-amber-700/80 mt-1">{summaryData.countChitPayments} chit payments.</p>
+            </div>
+
           </div>
         ) : (
           <div className="text-center text-slate-500 py-12 bg-slate-50 rounded-xl border border-slate-100">
@@ -142,7 +153,8 @@ export default function AdminSummaryPage() {
                 <tr className="bg-slate-100/50 text-slate-500 border-b border-slate-100 uppercase tracking-wider text-xs">
                   <th className="p-4 pl-6 font-bold">Member Name</th>
                   <th className="p-4 font-bold">Base Premium Paid</th>
-                  <th className="p-4 font-bold text-emerald-600">Dividend Share (Total: ₹{directoryData.dividendPerMember.toFixed(2)})</th>
+                  <th className="p-4 font-bold text-emerald-600">Dividend Share (Total: ₹{directoryData.dividendPerMember?.toFixed(2)})</th>
+                  <th className="p-4 font-bold text-amber-600">+ Chit Savings (Share: ₹{directoryData.chitShare?.toFixed(2)})</th>
                   <th className="p-4 pr-6 font-bold text-right text-indigo-700">Net Asset Value (NAV)</th>
                 </tr>
               </thead>
@@ -157,6 +169,7 @@ export default function AdminSummaryPage() {
                     </td>
                     <td className="p-4 text-slate-600 font-medium">₹{member.totalPremiumPaid.toFixed(2)}</td>
                     <td className="p-4 text-emerald-600 font-medium">+ ₹{member.dividendEarned.toFixed(2)}</td>
+                    <td className="p-4 text-amber-600 font-medium">+ ₹{member.chitShare?.toFixed(2) || '0.00'}</td>
                     <td className="p-4 pr-6 text-right font-bold text-indigo-700 text-base">₹{member.nav.toFixed(2)}</td>
                   </tr>
                 ))}

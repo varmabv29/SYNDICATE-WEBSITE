@@ -8,9 +8,9 @@ import type { Expenditure } from "@/types/models";
 export default function ExpendituresPage() {
   const [expenditures, setExpenditures] = useState<Expenditure[]>([]);
   const [loading, setLoading] = useState(true);
-  const [formData, setFormData] = useState({ amount: "", date: "", monthYear: "", remarks: "" });
+  const [formData, setFormData] = useState({ amount: "", date: "", monthYear: "", remarks: "", isChitPayment: false });
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editData, setEditData] = useState({ amount: "", date: "", monthYear: "", remarks: "" });
+  const [editData, setEditData] = useState({ amount: "", date: "", monthYear: "", remarks: "", isChitPayment: false });
 
   const fetchData = async () => {
     setLoading(true);
@@ -32,7 +32,7 @@ export default function ExpendituresPage() {
     });
 
     if (res.ok) {
-      setFormData({ amount: "", date: "", monthYear: "", remarks: "" });
+      setFormData({ amount: "", date: "", monthYear: "", remarks: "", isChitPayment: false });
       fetchData();
     } else {
       const data = await res.json();
@@ -53,13 +53,14 @@ export default function ExpendituresPage() {
       amount: exp.amount.toString(),
       date: new Date(exp.date).toISOString().split("T")[0],
       monthYear: exp.monthYear,
-      remarks: exp.remarks || ""
+      remarks: exp.remarks || "",
+      isChitPayment: exp.isChitPayment || false
     });
   };
 
   const cancelEdit = () => {
     setEditingId(null);
-    setEditData({ amount: "", date: "", monthYear: "", remarks: "" });
+    setEditData({ amount: "", date: "", monthYear: "", remarks: "", isChitPayment: false });
   };
 
   const saveEdit = async () => {
@@ -72,7 +73,7 @@ export default function ExpendituresPage() {
 
     if (res.ok) {
       setEditingId(null);
-      setEditData({ amount: "", date: "", monthYear: "", remarks: "" });
+      setEditData({ amount: "", date: "", monthYear: "", remarks: "", isChitPayment: false });
       fetchData();
     } else {
       const data = await res.json();
@@ -114,6 +115,13 @@ export default function ExpendituresPage() {
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Remarks</label>
                 <textarea rows={3} placeholder="Describe the expenditure..." className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 outline-none transition-all resize-none" value={formData.remarks} onChange={e => setFormData({...formData, remarks: e.target.value})} />
+              </div>
+              
+              <div className="flex items-center gap-2 mb-2 bg-slate-50 p-3 rounded-lg border border-slate-200">
+                <input type="checkbox" id="chitPayment" className="w-4 h-4 rounded text-rose-600 focus:ring-rose-500" checked={formData.isChitPayment} onChange={e => setFormData({...formData, isChitPayment: e.target.checked})} />
+                <label htmlFor="chitPayment" className="text-sm font-medium text-slate-700 select-none">
+                  Chit Payment (Capital Moved, Adds to NAV)
+                </label>
               </div>
               
               <button type="submit" className="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-2 rounded-lg transition-colors">
@@ -158,6 +166,10 @@ export default function ExpendituresPage() {
                               </td>
                               <td className="p-3">
                                 <input type="number" step="0.01" min="0" className="w-24 px-2 py-1.5 border border-indigo-300 rounded-md text-sm focus:ring-2 focus:ring-indigo-400 outline-none" value={editData.amount} onChange={e => setEditData({...editData, amount: e.target.value})} />
+                                <div className="mt-1 flex items-center gap-1">
+                                  <input type="checkbox" id={`editChit_${exp.id}`} className="w-3 h-3" checked={editData.isChitPayment} onChange={e => setEditData({...editData, isChitPayment: e.target.checked})} />
+                                  <label htmlFor={`editChit_${exp.id}`} className="text-[10px] text-slate-500">Chit</label>
+                                </div>
                               </td>
                               <td className="p-3 text-right">
                                 <div className="flex items-center justify-end gap-1">
@@ -175,7 +187,14 @@ export default function ExpendituresPage() {
                               <td className="p-4 text-slate-900">{formatDate(exp.date)}</td>
                               <td className="p-4 text-slate-500 font-mono text-xs">{exp.monthYear}</td>
                               <td className="p-4 text-slate-600 truncate max-w-[200px]" title={exp.remarks ?? undefined}>{exp.remarks || '-'}</td>
-                              <td className="p-4 font-bold text-rose-600">₹{exp.amount.toFixed(2)}</td>
+                              <td className="p-4 font-bold text-rose-600">
+                                ₹{exp.amount.toFixed(2)}
+                                {exp.isChitPayment && (
+                                  <span className="ml-2 inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20">
+                                    Chit
+                                  </span>
+                                )}
+                              </td>
                               <td className="p-4 text-right">
                                 <div className="flex items-center justify-end gap-1">
                                   <button onClick={() => startEdit(exp)} className="text-slate-400 hover:text-indigo-600 transition-colors p-1" title="Edit">

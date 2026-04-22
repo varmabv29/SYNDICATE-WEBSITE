@@ -79,34 +79,40 @@ interface ReportSummary {
 }
 
 // ─── Shared styles ───
-const BRAND_COLOR: [number, number, number] = [16, 185, 129]; // emerald-500
-const HEADER_BG: [number, number, number] = [30, 41, 59]; // slate-800
-const ALT_ROW: [number, number, number] = [248, 250, 252]; // slate-50
-const BORDER_COLOR: [number, number, number] = [226, 232, 240]; // slate-200
+const BRAND_COLOR: [number, number, number] = [79, 70, 229]; // indigo-600
+const BRAND_DARK: [number, number, number] = [30, 27, 75]; // indigo-950
+const ACCENT_GOLD: [number, number, number] = [245, 158, 11]; // amber-500
+const HEADER_BG: [number, number, number] = [30, 27, 75]; // indigo-950
+const ALT_ROW: [number, number, number] = [238, 242, 255]; // indigo-50
+const BORDER_COLOR: [number, number, number] = [199, 210, 254]; // indigo-200
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function addHeader(doc: any, title: string, subtitle: string) {
   const pageWidth = doc.internal.pageSize.getWidth();
 
-  // Brand bar
-  doc.setFillColor(...BRAND_COLOR);
-  doc.rect(0, 0, pageWidth, 28, "F");
+  // Deep gradient-effect header bar
+  doc.setFillColor(...BRAND_DARK);
+  doc.rect(0, 0, pageWidth, 30, "F");
+
+  // Gold accent line at bottom of header
+  doc.setFillColor(...ACCENT_GOLD);
+  doc.rect(0, 30, pageWidth, 1.5, "F");
 
   // Title
   doc.setFont("helvetica", "bold");
   doc.setFontSize(16);
   doc.setTextColor(255, 255, 255);
-  doc.text(title, 14, 12);
+  doc.text(title, 14, 13);
 
   // Subtitle
   doc.setFontSize(9);
   doc.setFont("helvetica", "normal");
-  doc.setTextColor(220, 252, 231); // emerald-100
-  doc.text(subtitle, 14, 20);
+  doc.setTextColor(199, 210, 254); // indigo-200
+  doc.text(subtitle, 14, 22);
 
-  // Date on the right
-  doc.setTextColor(255, 255, 255);
-  doc.text(`Generated: ${new Date().toLocaleDateString("en-IN")}`, pageWidth - 14, 20, { align: "right" });
+  // Date on the right with gold color
+  doc.setTextColor(...ACCENT_GOLD);
+  doc.text(`Generated: ${new Date().toLocaleDateString("en-IN")}`, pageWidth - 14, 22, { align: "right" });
 
   // Reset text color
   doc.setTextColor(0, 0, 0);
@@ -121,14 +127,14 @@ function addSummaryBox(
   const pageWidth = doc.internal.pageSize.getWidth();
   const boxH = 22;
 
-  // Summary background
-  doc.setFillColor(248, 250, 252);
-  doc.setDrawColor(...BORDER_COLOR);
+  // Summary background with subtle indigo tint
+  doc.setFillColor(238, 242, 255); // indigo-50
+  doc.setDrawColor(...BRAND_COLOR);
   doc.roundedRect(14, startY, pageWidth - 28, boxH, 3, 3, "FD");
 
   doc.setFontSize(7);
   doc.setFont("helvetica", "bold");
-  doc.setTextColor(100, 116, 139); // slate-500
+  doc.setTextColor(79, 70, 229); // indigo-600
 
   const cols = [
     { label: "TOTAL PREMIUMS", value: `₹${summary.totalPremiums.toFixed(0)}` },
@@ -144,7 +150,7 @@ function addSummaryBox(
     const x = 14 + i * colW + colW / 2;
     doc.setFontSize(6);
     doc.setFont("helvetica", "normal");
-    doc.setTextColor(100, 116, 139);
+    doc.setTextColor(79, 70, 229); // indigo-600
     doc.text(col.label, x, startY + 8, { align: "center" });
 
     doc.setFontSize(10);
@@ -198,14 +204,13 @@ export async function downloadPremiumPDF(
       fontStyle: "bold",
       fontSize: 8,
       cellPadding: 3,
+      halign: "center",
     },
-    bodyStyles: { fontSize: 8, cellPadding: 2.5 },
+    bodyStyles: { fontSize: 8, cellPadding: 2.5, halign: "center" },
     alternateRowStyles: { fillColor: ALT_ROW },
     styles: { lineColor: BORDER_COLOR, lineWidth: 0.3, overflow: "linebreak", cellWidth: "wrap" },
     columnStyles: {
       0: { halign: "center", cellWidth: 12 },
-      2: { halign: "right" },
-      3: { halign: "right", fontStyle: "bold" },
     },
     margin: { left: 14, right: 14 },
   });
@@ -214,12 +219,16 @@ export async function downloadPremiumPDF(
   const pageCount = doc.getNumberOfPages();
   for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
+    const pageH = doc.internal.pageSize.getHeight();
+    const pgW = doc.internal.pageSize.getWidth();
+    doc.setFillColor(...BRAND_DARK);
+    doc.rect(0, pageH - 12, pgW, 12, "F");
     doc.setFontSize(7);
-    doc.setTextColor(148, 163, 184);
+    doc.setTextColor(199, 210, 254); // indigo-200
     doc.text(
       `Page ${i} of ${pageCount}`,
-      doc.internal.pageSize.getWidth() / 2,
-      doc.internal.pageSize.getHeight() - 8,
+      pgW / 2,
+      pageH - 5,
       { align: "center" }
     );
   }
@@ -246,8 +255,8 @@ export async function downloadLoanPDF(
   let y = 36;
 
   // Loan info bar
-  doc.setFillColor(248, 250, 252);
-  doc.setDrawColor(...BORDER_COLOR);
+  doc.setFillColor(238, 242, 255); // indigo-50
+  doc.setDrawColor(...BRAND_COLOR);
   const pageW = doc.internal.pageSize.getWidth();
   doc.roundedRect(14, y, pageW - 28, 14, 3, 3, "FD");
 
@@ -265,7 +274,7 @@ export async function downloadLoanPDF(
     const x = 14 + i * infoColW + infoColW / 2;
     doc.setFontSize(6);
     doc.setFont("helvetica", "normal");
-    doc.setTextColor(100, 116, 139);
+    doc.setTextColor(79, 70, 229); // indigo-600
     doc.text(item.label.toUpperCase(), x, y + 5, { align: "center" });
     doc.setFontSize(9);
     doc.setFont("helvetica", "bold");
@@ -302,26 +311,20 @@ export async function downloadLoanPDF(
       fontStyle: "bold",
       fontSize: 8,
       cellPadding: 3,
+      halign: "center",
     },
-    bodyStyles: { fontSize: 8, cellPadding: 2.5 },
+    bodyStyles: { fontSize: 8, cellPadding: 2.5, halign: "center" },
     alternateRowStyles: { fillColor: ALT_ROW },
     styles: { lineColor: BORDER_COLOR, lineWidth: 0.3, overflow: "linebreak", cellWidth: "wrap" },
-    columnStyles: {
-      1: { halign: "right" },
-      2: { halign: "right" },
-      3: { halign: "right" },
-      4: { halign: "right", fontStyle: "bold" },
-      5: { halign: "right" },
-      6: { halign: "center" },
-    },
+    columnStyles: {},
     margin: { left: 14, right: 14 },
     didParseCell: (data: any) => {
       if (data.section === "body" && data.column.index === 6) {
         if (data.cell.raw === "PAID") {
-          data.cell.styles.textColor = [16, 185, 129];
+          data.cell.styles.textColor = [22, 163, 74]; // green-600
           data.cell.styles.fontStyle = "bold";
         } else {
-          data.cell.styles.textColor = [245, 158, 11];
+          data.cell.styles.textColor = [234, 88, 12]; // orange-600
           data.cell.styles.fontStyle = "bold";
         }
       }
@@ -332,12 +335,16 @@ export async function downloadLoanPDF(
   const pageCount = doc.getNumberOfPages();
   for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
+    const pageH = doc.internal.pageSize.getHeight();
+    const pgW = doc.internal.pageSize.getWidth();
+    doc.setFillColor(...BRAND_DARK);
+    doc.rect(0, pageH - 12, pgW, 12, "F");
     doc.setFontSize(7);
-    doc.setTextColor(148, 163, 184);
+    doc.setTextColor(199, 210, 254); // indigo-200
     doc.text(
       `Page ${i} of ${pageCount}`,
-      doc.internal.pageSize.getWidth() / 2,
-      doc.internal.pageSize.getHeight() - 8,
+      pgW / 2,
+      pageH - 5,
       { align: "center" }
     );
   }
@@ -387,16 +394,13 @@ export async function downloadMonthWisePDF(
       fontStyle: "bold",
       fontSize: 8,
       cellPadding: 3,
+      halign: "center",
     },
-    bodyStyles: { fontSize: 8, cellPadding: 2.5 },
+    bodyStyles: { fontSize: 8, cellPadding: 2.5, halign: "center" },
     alternateRowStyles: { fillColor: ALT_ROW },
     styles: { lineColor: BORDER_COLOR, lineWidth: 0.3, overflow: "linebreak", cellWidth: "wrap" },
     columnStyles: {
       0: { halign: "center", cellWidth: 12 },
-      3: { halign: "right" },
-      4: { halign: "right" },
-      5: { halign: "right" },
-      6: { halign: "right", fontStyle: "bold" },
     },
     margin: { left: 14, right: 14 },
   });
@@ -410,12 +414,13 @@ export async function downloadMonthWisePDF(
   // Get final Y from autoTable
   const finalY = (doc as any).lastAutoTable?.finalY || y + 20;
 
-  doc.setFillColor(241, 245, 249); // slate-100
+  doc.setFillColor(...BRAND_DARK);
   doc.rect(14, finalY, doc.internal.pageSize.getWidth() - 28, 8, "F");
   doc.setFontSize(8);
   doc.setFont("helvetica", "bold");
-  doc.setTextColor(15, 23, 42);
+  doc.setTextColor(255, 255, 255);
   doc.text("TOTALS:", 20, finalY + 5.5);
+  doc.setTextColor(...ACCENT_GOLD);
   doc.text(`₹${totalPremium.toFixed(2)}`, doc.internal.pageSize.getWidth() - 110, finalY + 5.5, { align: "right" });
   doc.text(`₹${totalPrincipal.toFixed(2)}`, doc.internal.pageSize.getWidth() - 80, finalY + 5.5, { align: "right" });
   doc.text(`₹${totalInterest.toFixed(2)}`, doc.internal.pageSize.getWidth() - 48, finalY + 5.5, { align: "right" });
@@ -425,12 +430,16 @@ export async function downloadMonthWisePDF(
   const pageCount = doc.getNumberOfPages();
   for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
+    const pageH = doc.internal.pageSize.getHeight();
+    const pgW = doc.internal.pageSize.getWidth();
+    doc.setFillColor(...BRAND_DARK);
+    doc.rect(0, pageH - 12, pgW, 12, "F");
     doc.setFontSize(7);
-    doc.setTextColor(148, 163, 184);
+    doc.setTextColor(199, 210, 254); // indigo-200
     doc.text(
       `Page ${i} of ${pageCount}`,
-      doc.internal.pageSize.getWidth() / 2,
-      doc.internal.pageSize.getHeight() - 8,
+      pgW / 2,
+      pageH - 5,
       { align: "center" }
     );
   }
@@ -480,8 +489,8 @@ export async function downloadProjectedPDF(
 
   // Info bar
   const pageW = doc.internal.pageSize.getWidth();
-  doc.setFillColor(248, 250, 252);
-  doc.setDrawColor(...BORDER_COLOR);
+  doc.setFillColor(238, 242, 255); // indigo-50
+  doc.setDrawColor(...BRAND_COLOR);
   doc.roundedRect(14, y, pageW - 28, 14, 3, 3, "FD");
 
   const infoItems = [
@@ -498,7 +507,7 @@ export async function downloadProjectedPDF(
     const x = 14 + i * infoColW + infoColW / 2;
     doc.setFontSize(6);
     doc.setFont("helvetica", "normal");
-    doc.setTextColor(100, 116, 139);
+    doc.setTextColor(79, 70, 229); // indigo-600
     doc.text(item.label.toUpperCase(), x, y + 5, { align: "center" });
     doc.setFontSize(9);
     doc.setFont("helvetica", "bold");
@@ -538,23 +547,21 @@ export async function downloadProjectedPDF(
       fontStyle: "bold",
       fontSize: 8,
       cellPadding: 3,
+      halign: "center",
     },
-    bodyStyles: { fontSize: 8, cellPadding: 2.5 },
+    bodyStyles: { fontSize: 8, cellPadding: 2.5, halign: "center" },
     alternateRowStyles: { fillColor: ALT_ROW },
     styles: { lineColor: BORDER_COLOR, lineWidth: 0.3, overflow: "linebreak", cellWidth: "wrap" },
     columnStyles: {
       0: { halign: "center", cellWidth: 12 },
-      2: { halign: "right" },
-      3: { halign: "right" },
-      4: { halign: "right" },
-      5: { halign: "right", fontStyle: "bold" },
     },
     margin: { left: 14, right: 14 },
     didParseCell: (data: any) => {
-      // Bold the grand total row
+      // Style the grand total row
       if (data.section === "body" && data.row.index === tableData.length - 1) {
         data.cell.styles.fontStyle = "bold";
-        data.cell.styles.fillColor = [241, 245, 249];
+        data.cell.styles.fillColor = BRAND_DARK as any;
+        data.cell.styles.textColor = [255, 255, 255];
       }
     },
   });
@@ -563,12 +570,16 @@ export async function downloadProjectedPDF(
   const pageCount = doc.getNumberOfPages();
   for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
+    const pageH = doc.internal.pageSize.getHeight();
+    const pgW = doc.internal.pageSize.getWidth();
+    doc.setFillColor(...BRAND_DARK);
+    doc.rect(0, pageH - 12, pgW, 12, "F");
     doc.setFontSize(7);
-    doc.setTextColor(148, 163, 184);
+    doc.setTextColor(199, 210, 254); // indigo-200
     doc.text(
       `Page ${i} of ${pageCount}`,
-      doc.internal.pageSize.getWidth() / 2,
-      doc.internal.pageSize.getHeight() - 8,
+      pgW / 2,
+      pageH - 5,
       { align: "center" }
     );
   }
@@ -625,18 +636,18 @@ export async function downloadActivityPDF(
         fontStyle: "bold",
         fontSize: 9,
         cellPadding: 4,
+        halign: "center",
       },
-      bodyStyles: { fontSize: 9, cellPadding: 3 },
+      bodyStyles: { fontSize: 9, cellPadding: 3, halign: "center" },
       alternateRowStyles: { fillColor: ALT_ROW },
       styles: { lineColor: BORDER_COLOR, lineWidth: 0.3, overflow: "linebreak", cellWidth: "wrap" },
-      columnStyles: {
-        2: { halign: "right", fontStyle: "bold" },
-      },
+      columnStyles: {},
       margin: { left: 14, right: 14 },
       didParseCell: (data: any) => {
         if (data.section === "body" && data.row.index === tableData.length - 1) {
           data.cell.styles.fontStyle = "bold";
-          data.cell.styles.fillColor = [241, 245, 249];
+          data.cell.styles.fillColor = BRAND_DARK as any;
+          data.cell.styles.textColor = [255, 255, 255];
         }
       },
     });
@@ -661,25 +672,26 @@ export async function downloadActivityPDF(
         fontStyle: "bold",
         fontSize: 8,
         cellPadding: 3,
+        halign: "center",
       },
-      bodyStyles: { fontSize: 8, cellPadding: 2.5 },
+      bodyStyles: { fontSize: 8, cellPadding: 2.5, halign: "center" },
       alternateRowStyles: { fillColor: ALT_ROW },
       styles: { lineColor: BORDER_COLOR, lineWidth: 0.3, overflow: "linebreak", cellWidth: "wrap" },
       columnStyles: {
         0: { halign: "center", cellWidth: 12 },
-        5: { halign: "right", fontStyle: "bold" },
       },
       margin: { left: 14, right: 14 },
     });
 
     // Add totals
     const finalY = (doc as any).lastAutoTable?.finalY || y + 20;
-    doc.setFillColor(241, 245, 249);
+    doc.setFillColor(...BRAND_DARK);
     doc.rect(14, finalY, doc.internal.pageSize.getWidth() - 28, 8, "F");
     doc.setFontSize(8);
     doc.setFont("helvetica", "bold");
-    doc.setTextColor(15, 23, 42);
+    doc.setTextColor(255, 255, 255);
     doc.text("GRAND TOTAL:", 20, finalY + 5.5);
+    doc.setTextColor(...ACCENT_GOLD);
     doc.text(`₹${grandTotal.toFixed(2)}`, doc.internal.pageSize.getWidth() - 14, finalY + 5.5, { align: "right" });
   }
 
@@ -687,12 +699,17 @@ export async function downloadActivityPDF(
   const pageCount = doc.getNumberOfPages();
   for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
+    // Footer bar
+    const pageH = doc.internal.pageSize.getHeight();
+    const pgW = doc.internal.pageSize.getWidth();
+    doc.setFillColor(...BRAND_DARK);
+    doc.rect(0, pageH - 12, pgW, 12, "F");
     doc.setFontSize(7);
-    doc.setTextColor(148, 163, 184);
+    doc.setTextColor(199, 210, 254); // indigo-200
     doc.text(
       `Page ${i} of ${pageCount}`,
-      doc.internal.pageSize.getWidth() / 2,
-      doc.internal.pageSize.getHeight() - 8,
+      pgW / 2,
+      pageH - 5,
       { align: "center" }
     );
   }

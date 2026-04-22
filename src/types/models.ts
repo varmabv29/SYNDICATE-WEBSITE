@@ -50,6 +50,7 @@ export interface Expenditure {
   date: string;
   monthYear: string;
   remarks: string | null;
+  isChitPayment: boolean;
 }
 
 export interface MemberDashboardData {
@@ -59,6 +60,8 @@ export interface MemberDashboardData {
     totalPremiumsPaid: number;
     dividendEarned: number;
     totalExpenditures: number;
+    totalChitContributions: number;
+    chitShare: number;
     pendingLoanRequests: number;
   };
   premiums: PremiumRecord[];

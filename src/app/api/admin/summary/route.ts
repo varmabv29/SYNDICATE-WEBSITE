@@ -49,16 +49,23 @@ export async function GET(req: Request) {
     const totalPremiums = premiums.reduce((sum, p) => sum + p.amount, 0);
     const totalPrincipalRepaid = installments.reduce((sum, i) => sum + (i.amountPaid - i.interestPaid), 0);
     const totalInterestCollected = installments.reduce((sum, i) => sum + i.interestPaid, 0);
-    const totalExpenditures = expenditures.reduce((sum, e) => sum + e.amount, 0);
+    
+    const regularExpenditures = expenditures.filter(e => !e.isChitPayment);
+    const chitPayments = expenditures.filter(e => e.isChitPayment);
+    
+    const totalExpenditures = regularExpenditures.reduce((sum, e) => sum + e.amount, 0);
+    const totalChitContributions = chitPayments.reduce((sum, e) => sum + e.amount, 0);
 
     return NextResponse.json({
       totalPremiums,
       totalPrincipalRepaid,
       totalInterestCollected,
       totalExpenditures,
+      totalChitContributions,
       countPremiums: premiums.length,
       countInstallments: installments.length,
-      countExpenditures: expenditures.length
+      countExpenditures: regularExpenditures.length,
+      countChitPayments: chitPayments.length
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

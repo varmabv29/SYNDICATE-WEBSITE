@@ -28,7 +28,7 @@ export async function POST(req: Request) {
   if (!adminEntry) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const { amount, date, monthYear, remarks } = await req.json();
+    const { amount, date, monthYear, remarks, isChitPayment } = await req.json();
 
     if (!amount || !date || !monthYear) {
       return NextResponse.json({ error: "Missing required fields (amount, date, monthYear)" }, { status: 400 });
@@ -39,7 +39,8 @@ export async function POST(req: Request) {
         amount: parseFloat(amount),
         date: new Date(date),
         monthYear,
-        remarks: remarks || null
+        remarks: remarks || null,
+        isChitPayment: isChitPayment || false
       }
     });
 

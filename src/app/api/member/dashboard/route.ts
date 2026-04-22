@@ -25,7 +25,16 @@ export async function GET() {
     const totalGroupInterest = paidInstallments.reduce((sum: number, inst: any) => sum + (inst.interestPaid || 0), 0);
     const totalMembers = await prisma.user.count({ where: { role: "MEMBER" }});
     const dividendEarned = totalMembers > 0 ? (totalGroupInterest / totalMembers) : 0;
-    const nav = totalPremiumsPaid + dividendEarned;
+    
+    const expenditures = await prisma.expenditure.findMany();
+    const regularExpenditures = expenditures.filter(e => !e.isChitPayment);
+    const chitPayments = expenditures.filter(e => e.isChitPayment);
+    
+    const totalExpenditures = regularExpenditures.reduce((sum, e) => sum + e.amount, 0);
+    const totalChitContributions = chitPayments.reduce((sum, e) => sum + e.amount, 0);
+    
+    const chitShare = totalMembers > 0 ? (totalChitContributions / totalMembers) : 0;
+    const nav = totalPremiumsPaid + dividendEarned + chitShare;
 
     const loans = await prisma.loan.findMany({
       where: { userId },
@@ -37,8 +46,7 @@ export async function GET() {
       orderBy: { startDate: "desc" }
     });
 
-    const expenditures = await prisma.expenditure.findMany();
-    const totalExpenditures = expenditures.reduce((sum, e) => sum + e.amount, 0);
+
 
     const pendingLoanRequests = await prisma.loanRequest.count({
       where: { status: "PENDING" }
@@ -51,6 +59,8 @@ export async function GET() {
         dividendEarned,
         nav,
         totalExpenditures,
+        totalChitContributions,
+        chitShare,
         activeLoansCount: loans.filter((l: any) => l.status === "ACTIVE").length,
         pendingLoanRequests,
       },

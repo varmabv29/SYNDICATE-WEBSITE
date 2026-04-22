@@ -17,6 +17,11 @@ export async function GET(req: Request) {
     });
     const totalGroupInterest = paidInstallments.reduce((sum: number, inst: any) => sum + (inst.interestPaid || 0), 0);
 
+    const expenditures = await prisma.expenditure.findMany({
+      where: { isChitPayment: true }
+    });
+    const totalChitContributions = expenditures.reduce((sum: number, e: any) => sum + e.amount, 0);
+
     // 2. Get all members (excluding ADMIN)
     const members = await prisma.user.findMany({
       where: { role: "MEMBER" },
@@ -30,11 +35,12 @@ export async function GET(req: Request) {
 
     const totalMembers = members.length;
     const dividendPerMember = totalMembers > 0 ? (totalGroupInterest / totalMembers) : 0;
+    const chitShare = totalMembers > 0 ? (totalChitContributions / totalMembers) : 0;
 
     // 3. Calculate NAV for each member
     const directory = members.map((member: any) => {
       const totalPremiumPaid = member.premiums.reduce((sum: number, p: any) => sum + p.amount, 0);
-      const nav = totalPremiumPaid + dividendPerMember;
+      const nav = totalPremiumPaid + dividendPerMember + chitShare;
 
       return {
         id: member.id,
@@ -42,6 +48,7 @@ export async function GET(req: Request) {
         username: member.username,
         totalPremiumPaid,
         dividendEarned: dividendPerMember,
+        chitShare,
         nav
       };
     });
@@ -50,6 +57,7 @@ export async function GET(req: Request) {
       totalGroupInterest,
       totalMembers,
       dividendPerMember,
+      chitShare,
       members: directory
     });
   } catch (error: any) {

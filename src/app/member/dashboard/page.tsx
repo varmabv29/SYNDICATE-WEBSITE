@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { HandCoins, TrendingUp, CreditCard, History, Clock, CheckIcon, Search, Download, AlertTriangle, Receipt, Send, X } from "lucide-react";
+import { HandCoins, TrendingUp, CreditCard, History, Clock, CheckIcon, Search, Download, AlertTriangle, Receipt, Send, X, PiggyBank } from "lucide-react";
 import { formatDate } from "@/lib/format";
 import LoanRequestsModal from "@/components/LoanRequestsModal";
 import type { MemberDashboardData, Loan, Installment } from "@/types/models";
@@ -134,7 +134,7 @@ export default function MemberDashboardPage() {
       </div>
       
       {/* Top Level Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 md:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4 md:gap-6">
         {/* NAV Card */}
         <div className="bg-indigo-600 rounded-xl border border-indigo-700 p-6 shadow-sm text-white">
            <div className="flex items-center justify-between mb-4">
@@ -144,10 +144,27 @@ export default function MemberDashboardPage() {
              </div>
            </div>
            <div className="text-3xl font-bold">₹{summary.nav.toFixed(2)}</div>
-           <p className="text-xs text-indigo-200 mt-1 flex justify-between">
-             <span>Premium: ₹{summary.totalPremiumsPaid.toFixed(0)}</span>
-             <span className="font-bold text-white">+ Div: ₹{summary.dividendEarned.toFixed(0)}</span>
-           </p>
+            <p className="text-xs text-indigo-200 mt-2 flex flex-col gap-1">
+             <span className="flex justify-between"><span>Premium:</span> <span>₹{summary.totalPremiumsPaid.toFixed(0)}</span></span>
+             <span className="flex justify-between font-medium"><span>Dividend:</span> <span>+ ₹{summary.dividendEarned.toFixed(0)}</span></span>
+             <span className="flex justify-between font-medium text-amber-200"><span>Chit Share:</span> <span>+ ₹{summary.chitShare?.toFixed(0) || 0}</span></span>
+            </p>
+         </div>
+         
+         <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border border-amber-200 p-6 shadow-sm">
+           <div className="flex items-center justify-between mb-4">
+             <h2 className="text-sm font-medium text-amber-800">Total Chit Savings</h2>
+             <div className="p-2 rounded-lg bg-amber-200 text-amber-700">
+               <PiggyBank className="w-5 h-5" />
+             </div>
+           </div>
+           <div className="flex items-end gap-3">
+             <div className="text-3xl font-bold text-amber-900">₹{summary.totalChitContributions?.toFixed(2) || '0.00'}</div>
+             <div className="text-sm font-semibold text-amber-700 bg-amber-100 px-2 py-1 rounded-md mb-1 border border-amber-200/50">
+               My Share: ₹{summary.chitShare?.toFixed(2) || '0.00'}
+             </div>
+           </div>
+           <p className="text-xs text-amber-700/80 mt-2">Group's total chit pool and your allocated share</p>
          </div>
         <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
            <div className="flex items-center justify-between mb-4">
