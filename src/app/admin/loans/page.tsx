@@ -98,7 +98,7 @@ export default function LoansManagerPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Principal Amount (₹)</label>
-                <input required type="number" step="0.01" min="1" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all" value={formData.principalAmount} onChange={e => setFormData({...formData, principalAmount: e.target.value})} />
+                <input required type="number" step="1" min="1" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all" value={formData.principalAmount} onChange={e => setFormData({...formData, principalAmount: e.target.value})} />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Interest Rate</label>
@@ -179,7 +179,7 @@ export default function LoansManagerPage() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-xl font-bold text-slate-900">₹{loan.principalAmount.toFixed(2)}</div>
+                  <div className="text-xl font-bold text-slate-900">₹{loan.principalAmount.toFixed(0)}</div>
                   <div className={`text-xs font-medium px-2 py-0.5 rounded-full inline-block mt-1 ${loan.status === 'ACTIVE' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}`}>
                     {loan.status}
                   </div>
@@ -208,11 +208,11 @@ export default function LoansManagerPage() {
                         return (
                           <tr key={inst.id} className="hover:bg-slate-50/50 transition-colors">
                             <td className="p-3 pl-4 font-medium text-slate-900">{inst.monthYear || formatDate(inst.dueDate)}</td>
-                            <td className="p-3 text-slate-500">₹{opening.toFixed(2)}</td>
-                            <td className="p-3 text-emerald-600">₹{inst.principalDue.toFixed(2)}</td>
-                            <td className="p-3 text-rose-500">₹{inst.interestDue.toFixed(2)}</td>
-                            <td className="p-3 font-bold text-slate-900">₹{inst.amountDue.toFixed(2)}</td>
-                            <td className="p-3 text-slate-500">₹{Math.max(0, closing).toFixed(2)}</td>
+                            <td className="p-3 text-slate-500">₹{opening.toFixed(0)}</td>
+                            <td className="p-3 text-emerald-600">₹{inst.principalDue.toFixed(0)}</td>
+                            <td className="p-3 text-rose-500">₹{inst.interestDue.toFixed(0)}</td>
+                            <td className="p-3 font-bold text-slate-900">₹{inst.amountDue.toFixed(0)}</td>
+                            <td className="p-3 text-slate-500">₹{Math.max(0, closing).toFixed(0)}</td>
                             <td className="p-3 pr-4 text-right">
                               <button 
                                 onClick={() => togglePaidStatus(inst.id, inst.status)}

@@ -112,7 +112,7 @@ export default function SettingsPage() {
                 <input 
                   required
                   type="number" 
-                  step="0.01" 
+                  step="1" 
                   min="0"
                   className="w-full max-w-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all" 
                   value={monthlyPremium} 

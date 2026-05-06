@@ -46,7 +46,7 @@ export default function MemberDirectoryPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
             <h3 className="text-sm font-medium text-slate-500 uppercase tracking-wider mb-2">Total Group Interest</h3>
-            <div className="text-2xl font-bold text-slate-900">₹{data.totalGroupInterest.toFixed(2)}</div>
+            <div className="text-2xl font-bold text-slate-900">₹{data.totalGroupInterest.toFixed(0)}</div>
             <p className="text-xs text-slate-400 mt-1">Earned from all loans combined</p>
           </div>
           <div className="bg-indigo-600 border border-indigo-700 rounded-xl p-6 shadow-sm text-white">
@@ -54,7 +54,7 @@ export default function MemberDirectoryPage() {
               <TrendingUp className="w-4 h-4" /> 
               Dividend Per Member
             </h3>
-            <div className="text-3xl font-bold">₹{data.dividendPerMember.toFixed(2)}</div>
+            <div className="text-3xl font-bold">₹{data.dividendPerMember.toFixed(0)}</div>
             <p className="text-xs text-indigo-200 mt-1">Equally distributed among {data.totalMembers} members</p>
           </div>
           <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
@@ -98,10 +98,10 @@ export default function MemberDirectoryPage() {
                         <span className="text-xs text-slate-500">@{member.username}</span>
                       </div>
                     </td>
-                    <td className="p-4 text-slate-600 font-medium">₹{member.totalPremiumPaid.toFixed(2)}</td>
-                    <td className="p-4 text-emerald-600 font-medium">+ ₹{member.dividendEarned.toFixed(2)}</td>
-                    <td className="p-4 text-amber-600 font-medium">+ ₹{member.chitShare?.toFixed(2) || '0.00'}</td>
-                    <td className="p-4 pr-6 text-right font-bold text-indigo-700 text-base">₹{member.nav.toFixed(2)}</td>
+                    <td className="p-4 text-slate-600 font-medium">₹{member.totalPremiumPaid.toFixed(0)}</td>
+                    <td className="p-4 text-emerald-600 font-medium">+ ₹{member.dividendEarned.toFixed(0)}</td>
+                    <td className="p-4 text-amber-600 font-medium">+ ₹{member.chitShare?.toFixed(0) || '0'}</td>
+                    <td className="p-4 pr-6 text-right font-bold text-indigo-700 text-base">₹{member.nav.toFixed(0)}</td>
                   </tr>
                 ))}
               </tbody>

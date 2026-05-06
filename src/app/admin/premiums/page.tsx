@@ -75,7 +75,7 @@ export default function PremiumsManagerPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Amount (₹)</label>
-                  <input required type="number" step="0.01" min="0" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all" placeholder="100.00" value={formData.amount} onChange={e => setFormData({...formData, amount: e.target.value})} />
+                  <input required type="number" step="1" min="0" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all" placeholder="100" value={formData.amount} onChange={e => setFormData({...formData, amount: e.target.value})} />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Date Paid (Optional)</label>
@@ -126,7 +126,7 @@ export default function PremiumsManagerPage() {
                         <div className="font-medium text-slate-900">{p.user.name}</div>
                         <div className="text-sm text-slate-500">@{p.user.username}</div>
                       </td>
-                      <td className="p-4 font-bold text-slate-900">₹{p.amount.toFixed(2)}</td>
+                      <td className="p-4 font-bold text-slate-900">₹{p.amount.toFixed(0)}</td>
                       <td className="p-4 text-slate-500 text-sm">{formatDate(p.datePaid)}</td>
                       <td className="p-4">
                         <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-800">

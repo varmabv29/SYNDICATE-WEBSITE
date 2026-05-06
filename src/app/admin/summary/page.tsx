@@ -76,7 +76,7 @@ export default function AdminSummaryPage() {
                 </div>
                 <div className="text-sm font-semibold text-emerald-900">Total Premium Collected</div>
               </div>
-              <div className="text-3xl font-bold text-emerald-700 mt-2">₹{summaryData.totalPremiums.toFixed(2)}</div>
+              <div className="text-3xl font-bold text-emerald-700 mt-2">₹{summaryData.totalPremiums.toFixed(0)}</div>
               <p className="text-xs text-emerald-600/80 mt-1">{summaryData.countPremiums} premium records found.</p>
             </div>
             
@@ -87,7 +87,7 @@ export default function AdminSummaryPage() {
                 </div>
                 <div className="text-sm font-semibold text-indigo-900">Total Principal Repaid</div>
               </div>
-              <div className="text-3xl font-bold text-indigo-700 mt-2">₹{summaryData.totalPrincipalRepaid.toFixed(2)}</div>
+              <div className="text-3xl font-bold text-indigo-700 mt-2">₹{summaryData.totalPrincipalRepaid.toFixed(0)}</div>
               <p className="text-xs text-indigo-600/80 mt-1">From {summaryData.countInstallments} paid installments.</p>
             </div>
 
@@ -98,7 +98,7 @@ export default function AdminSummaryPage() {
                 </div>
                 <div className="text-sm font-semibold text-amber-900">Total Interest Earned</div>
               </div>
-              <div className="text-3xl font-bold text-amber-700 mt-2">₹{summaryData.totalInterestCollected.toFixed(2)}</div>
+              <div className="text-3xl font-bold text-amber-700 mt-2">₹{summaryData.totalInterestCollected.toFixed(0)}</div>
               <p className="text-xs text-amber-600/80 mt-1">Aggregated from loan returns.</p>
             </div>
 
@@ -109,7 +109,7 @@ export default function AdminSummaryPage() {
                 </div>
                 <div className="text-sm font-semibold text-rose-900">Other Expenditures</div>
               </div>
-              <div className="text-3xl font-bold text-rose-700 mt-2">₹{summaryData.totalExpenditures.toFixed(2)}</div>
+              <div className="text-3xl font-bold text-rose-700 mt-2">₹{summaryData.totalExpenditures.toFixed(0)}</div>
               <p className="text-xs text-rose-600/80 mt-1">{summaryData.countExpenditures} recorded expenditures.</p>
             </div>
 
@@ -120,7 +120,7 @@ export default function AdminSummaryPage() {
                 </div>
                 <div className="text-sm font-semibold text-amber-900">Total Chit Contributions</div>
               </div>
-              <div className="text-3xl font-bold text-amber-700 mt-2">₹{summaryData.totalChitContributions.toFixed(2)}</div>
+              <div className="text-3xl font-bold text-amber-700 mt-2">₹{summaryData.totalChitContributions.toFixed(0)}</div>
               <p className="text-xs text-amber-700/80 mt-1">{summaryData.countChitPayments} chit payments.</p>
             </div>
 
@@ -153,8 +153,8 @@ export default function AdminSummaryPage() {
                 <tr className="bg-slate-100/50 text-slate-500 border-b border-slate-100 uppercase tracking-wider text-xs">
                   <th className="p-4 pl-6 font-bold">Member Name</th>
                   <th className="p-4 font-bold">Base Premium Paid</th>
-                  <th className="p-4 font-bold text-emerald-600">Dividend Share (Total: ₹{directoryData.dividendPerMember?.toFixed(2)})</th>
-                  <th className="p-4 font-bold text-amber-600">+ Chit Savings (Share: ₹{directoryData.chitShare?.toFixed(2)})</th>
+                  <th className="p-4 font-bold text-emerald-600">Dividend Share (Total: ₹{directoryData.dividendPerMember?.toFixed(0)})</th>
+                  <th className="p-4 font-bold text-amber-600">+ Chit Savings (Share: ₹{directoryData.chitShare?.toFixed(0)})</th>
                   <th className="p-4 pr-6 font-bold text-right text-indigo-700">Net Asset Value (NAV)</th>
                 </tr>
               </thead>
@@ -167,10 +167,10 @@ export default function AdminSummaryPage() {
                         <span className="text-xs text-slate-500">@{member.username}</span>
                       </div>
                     </td>
-                    <td className="p-4 text-slate-600 font-medium">₹{member.totalPremiumPaid.toFixed(2)}</td>
-                    <td className="p-4 text-emerald-600 font-medium">+ ₹{member.dividendEarned.toFixed(2)}</td>
-                    <td className="p-4 text-amber-600 font-medium">+ ₹{member.chitShare?.toFixed(2) || '0.00'}</td>
-                    <td className="p-4 pr-6 text-right font-bold text-indigo-700 text-base">₹{member.nav.toFixed(2)}</td>
+                    <td className="p-4 text-slate-600 font-medium">₹{member.totalPremiumPaid.toFixed(0)}</td>
+                    <td className="p-4 text-emerald-600 font-medium">+ ₹{member.dividendEarned.toFixed(0)}</td>
+                    <td className="p-4 text-amber-600 font-medium">+ ₹{member.chitShare?.toFixed(0) || '0'}</td>
+                    <td className="p-4 pr-6 text-right font-bold text-indigo-700 text-base">₹{member.nav.toFixed(0)}</td>
                   </tr>
                 ))}
               </tbody>

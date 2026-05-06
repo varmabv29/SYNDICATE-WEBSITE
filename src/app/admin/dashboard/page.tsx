@@ -34,9 +34,9 @@ export default async function AdminDashboardPage() {
 
   const stats = [
     { label: "Total Members", value: totalUsers, icon: Users, color: "bg-blue-500" },
-    { label: "Total Premiums", value: `₹${totalCollections.toFixed(2)}`, icon: CreditCard, color: "bg-emerald-500" },
-    { label: "Total Expenditures", value: `₹${totalExpenditures.toFixed(2)}`, icon: Wallet, color: "bg-rose-500" },
-    { label: "Chit Contributions", value: `₹${totalChitContributions.toFixed(2)}`, icon: PiggyBank, color: "bg-amber-500" },
+    { label: "Total Premiums", value: `₹${totalCollections.toFixed(0)}`, icon: CreditCard, color: "bg-emerald-500" },
+    { label: "Total Expenditures", value: `₹${totalExpenditures.toFixed(0)}`, icon: Wallet, color: "bg-rose-500" },
+    { label: "Chit Contributions", value: `₹${totalChitContributions.toFixed(0)}`, icon: PiggyBank, color: "bg-amber-500" },
     { label: "Active Loans", value: activeLoansCount, icon: Banknote, color: "bg-purple-500" },
   ];
 
@@ -53,17 +53,17 @@ export default async function AdminDashboardPage() {
         <div className="relative z-10">
           <h2 className="text-indigo-200 font-medium tracking-wider text-sm uppercase mb-2">Available Cash in Hand</h2>
           <div className="text-5xl md:text-6xl font-extrabold tracking-tight mb-4 drop-shadow-sm">
-            ₹{cashInHand.toFixed(2)}
+            ₹{cashInHand.toFixed(0)}
           </div>
           <div className="flex gap-4 text-xs font-medium border-t border-white/20 pt-4 mt-2 max-w-lg">
             <div className="flex flex-col">
               <span className="text-indigo-200">Total Inflow(Premiums + Repaid)</span>
-              <span className="text-emerald-300">₹{(totalCollections + totalRepaid).toFixed(2)}</span>
+              <span className="text-emerald-300">₹{(totalCollections + totalRepaid).toFixed(0)}</span>
             </div>
             <div className="w-px bg-white/20"></div>
             <div className="flex flex-col">
               <span className="text-indigo-200">Total Outflow(Loans + Exp + Chit)</span>
-              <span className="text-rose-300">₹{(totalDisbursed + totalExpenditures + totalChitContributions).toFixed(2)}</span>
+              <span className="text-rose-300">₹{(totalDisbursed + totalExpenditures + totalChitContributions).toFixed(0)}</span>
             </div>
           </div>
         </div>

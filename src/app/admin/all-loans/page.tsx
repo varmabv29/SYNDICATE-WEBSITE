@@ -83,7 +83,7 @@ export default function AdminGroupLoansPage() {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-slate-600 flex-1 md:px-8">
                        <div>
                          <span className="block text-xs uppercase text-slate-400 font-bold mb-0.5">Loan Amount</span>
-                         <span className="font-medium text-slate-900">₹{loan.principalAmount.toFixed(2)}</span>
+                         <span className="font-medium text-slate-900">₹{loan.principalAmount.toFixed(0)}</span>
                        </div>
                        <div>
                          <span className="block text-xs uppercase text-slate-400 font-bold mb-0.5">Tenure & Rate</span>
@@ -95,7 +95,7 @@ export default function AdminGroupLoansPage() {
                        </div>
                        <div>
                          <span className="block text-xs uppercase text-slate-400 font-bold mb-0.5">Remaining Bal</span>
-                         <span className="font-medium text-indigo-700">₹{remainingBalance.toFixed(2)}</span>
+                         <span className="font-medium text-indigo-700">₹{remainingBalance.toFixed(0)}</span>
                        </div>
                     </div>
                   </div>
@@ -127,11 +127,11 @@ export default function AdminGroupLoansPage() {
                                 return (
                                   <tr key={inst.id} className="hover:bg-slate-50/50 transition-colors">
                                     <td className="p-3 pl-4 font-medium text-slate-800">{inst.monthYear || formatDate(inst.dueDate)}</td>
-                                    <td className="p-3 text-slate-500">₹{opening.toFixed(2)}</td>
-                                    <td className="p-3 text-emerald-600">₹{inst.principalDue.toFixed(2)}</td>
-                                    <td className="p-3 text-rose-500">₹{inst.interestDue.toFixed(2)}</td>
-                                    <td className="p-3 font-bold text-slate-900">₹{inst.amountDue.toFixed(2)}</td>
-                                    <td className="p-3 text-slate-500">₹{Math.max(0, closing).toFixed(2)}</td>
+                                    <td className="p-3 text-slate-500">₹{opening.toFixed(0)}</td>
+                                    <td className="p-3 text-emerald-600">₹{inst.principalDue.toFixed(0)}</td>
+                                    <td className="p-3 text-rose-500">₹{inst.interestDue.toFixed(0)}</td>
+                                    <td className="p-3 font-bold text-slate-900">₹{inst.amountDue.toFixed(0)}</td>
+                                    <td className="p-3 text-slate-500">₹{Math.max(0, closing).toFixed(0)}</td>
                                     <td className="p-3 pr-4 text-right">
                                       {inst.status === 'PAID' ? (
                                         <span className="inline-flex items-center gap-1 text-emerald-600 text-[10px] bg-emerald-50 font-bold uppercase px-2 py-0.5 rounded">

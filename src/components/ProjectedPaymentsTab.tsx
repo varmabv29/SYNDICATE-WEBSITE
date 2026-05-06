@@ -93,10 +93,10 @@ export default function ProjectedPaymentsTab({ isAdmin, members = [] }: Props) {
     const headers = "Member Name,Base Contribution (₹),Loan Principal (₹),Interest (₹),Total Due (₹)\n";
     const rows = data.projections
       .map((p) =>
-        `${p.memberName},${p.baseContribution.toFixed(2)},${p.loanInstallmentPrincipal.toFixed(2)},${p.accruedInterest.toFixed(2)},${p.totalDue.toFixed(2)}`
+        `${p.memberName},${p.baseContribution.toFixed(0)},${p.loanInstallmentPrincipal.toFixed(0)},${p.accruedInterest.toFixed(0)},${p.totalDue.toFixed(0)}`
       )
       .join("\n");
-    const total = `\nGRAND TOTAL,${data.grandTotal.baseContribution.toFixed(2)},${data.grandTotal.loanInstallmentPrincipal.toFixed(2)},${data.grandTotal.accruedInterest.toFixed(2)},${data.grandTotal.totalDue.toFixed(2)}`;
+    const total = `\nGRAND TOTAL,${data.grandTotal.baseContribution.toFixed(0)},${data.grandTotal.loanInstallmentPrincipal.toFixed(0)},${data.grandTotal.accruedInterest.toFixed(0)},${data.grandTotal.totalDue.toFixed(0)}`;
     const blob = new Blob([headers + rows + total], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -217,10 +217,10 @@ export default function ProjectedPaymentsTab({ isAdmin, members = [] }: Props) {
                         </span>
                       )}
                     </td>
-                    <td className="p-4 text-right text-emerald-600 font-semibold">₹{p.baseContribution.toFixed(2)}</td>
-                    <td className="p-4 text-right text-indigo-600 font-semibold">₹{p.loanInstallmentPrincipal.toFixed(2)}</td>
-                    <td className="p-4 text-right text-rose-500 font-semibold">₹{p.accruedInterest.toFixed(2)}</td>
-                    <td className="p-4 text-right font-bold text-slate-900">₹{p.totalDue.toFixed(2)}</td>
+                    <td className="p-4 text-right text-emerald-600 font-semibold">₹{p.baseContribution.toFixed(0)}</td>
+                    <td className="p-4 text-right text-indigo-600 font-semibold">₹{p.loanInstallmentPrincipal.toFixed(0)}</td>
+                    <td className="p-4 text-right text-rose-500 font-semibold">₹{p.accruedInterest.toFixed(0)}</td>
+                    <td className="p-4 text-right font-bold text-slate-900">₹{p.totalDue.toFixed(0)}</td>
                   </tr>
                   {expandedUser === p.userId && p.loanBreakdown.length > 0 && (
                     <tr key={`${p.userId}-detail`}>
@@ -240,9 +240,9 @@ export default function ProjectedPaymentsTab({ isAdmin, members = [] }: Props) {
                               {p.loanBreakdown.map((lb) => (
                                 <tr key={lb.loanId} className="hover:bg-slate-50/50">
                                   <td className="p-2 pl-3 font-medium text-indigo-700">{lb.loanId}</td>
-                                  <td className="p-2 text-right text-slate-700">₹{lb.principalDue.toFixed(2)}</td>
-                                  <td className="p-2 text-right text-rose-500">₹{lb.interestDue.toFixed(2)}</td>
-                                  <td className="p-2 pr-3 text-right font-bold text-slate-900">₹{lb.emiDue.toFixed(2)}</td>
+                                  <td className="p-2 text-right text-slate-700">₹{lb.principalDue.toFixed(0)}</td>
+                                  <td className="p-2 text-right text-rose-500">₹{lb.interestDue.toFixed(0)}</td>
+                                  <td className="p-2 pr-3 text-right font-bold text-slate-900">₹{lb.emiDue.toFixed(0)}</td>
                                 </tr>
                               ))}
                             </tbody>
@@ -257,10 +257,10 @@ export default function ProjectedPaymentsTab({ isAdmin, members = [] }: Props) {
               <tr className="bg-slate-100/80 border-t-2 border-slate-300">
                 <td className="p-4" />
                 <td className="p-4 font-bold text-slate-900 uppercase text-xs tracking-wider">Grand Total</td>
-                <td className="p-4 text-right font-bold text-emerald-700">₹{data.grandTotal.baseContribution.toFixed(2)}</td>
-                <td className="p-4 text-right font-bold text-indigo-700">₹{data.grandTotal.loanInstallmentPrincipal.toFixed(2)}</td>
-                <td className="p-4 text-right font-bold text-rose-600">₹{data.grandTotal.accruedInterest.toFixed(2)}</td>
-                <td className="p-4 text-right font-extrabold text-slate-900 text-base">₹{data.grandTotal.totalDue.toFixed(2)}</td>
+                <td className="p-4 text-right font-bold text-emerald-700">₹{data.grandTotal.baseContribution.toFixed(0)}</td>
+                <td className="p-4 text-right font-bold text-indigo-700">₹{data.grandTotal.loanInstallmentPrincipal.toFixed(0)}</td>
+                <td className="p-4 text-right font-bold text-rose-600">₹{data.grandTotal.accruedInterest.toFixed(0)}</td>
+                <td className="p-4 text-right font-extrabold text-slate-900 text-base">₹{data.grandTotal.totalDue.toFixed(0)}</td>
               </tr>
             </tbody>
           </table>

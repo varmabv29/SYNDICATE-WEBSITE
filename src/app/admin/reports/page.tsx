@@ -209,7 +209,7 @@ export default function AdminReportsPage() {
     const rows = report.premiums
       .map((p) => {
         runningTotal += p.amount;
-        return `${formatDate(p.datePaid)},${p.amount.toFixed(2)},${runningTotal.toFixed(2)}`;
+        return `${formatDate(p.datePaid)},${p.amount.toFixed(0)},${runningTotal.toFixed(0)}`;
       })
       .join("\n");
     downloadCSV(headers + rows, `Premium_Statement_${report.targetUser.username}.csv`);
@@ -220,7 +220,7 @@ export default function AdminReportsPage() {
     const headers = "Member Name,Payment Month,Monthly Premium (₹),Loan Installment (₹),Interest Paid (₹),Total Paid (₹)\n";
     const rows = monthWisePayments
       .map((row) => {
-        return `${row.memberName},${row.monthYear},${row.premium.toFixed(2)},${row.principal.toFixed(2)},${row.interest.toFixed(2)},${row.total.toFixed(2)}`;
+        return `${row.memberName},${row.monthYear},${row.premium.toFixed(0)},${row.principal.toFixed(0)},${row.interest.toFixed(0)},${row.total.toFixed(0)}`;
       })
       .join("\n");
     downloadCSV(headers + rows, `Month_Wise_Payments_${report?.targetUser.username || "all"}.csv`);
@@ -234,7 +234,7 @@ export default function AdminReportsPage() {
         const opening = balance;
         const closing = opening - inst.principalDue;
         balance = closing;
-        return `${inst.monthYear},${opening.toFixed(2)},${inst.principalDue.toFixed(2)},${inst.interestDue.toFixed(2)},${inst.amountDue.toFixed(2)},${Math.max(0, closing).toFixed(2)},${inst.status}`;
+        return `${inst.monthYear},${opening.toFixed(0)},${inst.principalDue.toFixed(0)},${inst.interestDue.toFixed(0)},${inst.amountDue.toFixed(0)},${Math.max(0, closing).toFixed(0)},${inst.status}`;
       })
       .join("\n");
     downloadCSV(headers + rows, `Loan_${loan.customId}_Schedule.csv`);
@@ -463,10 +463,10 @@ export default function AdminReportsPage() {
                                   )}
                                 </td>
                                 <td className="p-4 text-emerald-600 font-bold">
-                                  ₹{p.amount.toFixed(2)}
+                                  ₹{p.amount.toFixed(0)}
                                 </td>
                                 <td className="p-4 font-bold text-slate-900">
-                                  ₹{runningTotal.toFixed(2)}
+                                  ₹{runningTotal.toFixed(0)}
                                 </td>
                               </tr>
                             );
@@ -629,7 +629,7 @@ export default function AdminReportsPage() {
                                                   formatDate(inst.dueDate)}
                                               </td>
                                               <td className="p-3 text-slate-500">
-                                                ₹{opening.toFixed(2)}
+                                                ₹{opening.toFixed(0)}
                                               </td>
                                               <td className="p-3 text-emerald-600">
                                                 ₹
@@ -644,14 +644,14 @@ export default function AdminReportsPage() {
                                                 )}
                                               </td>
                                               <td className="p-3 font-bold text-slate-900">
-                                                ₹{inst.amountDue.toFixed(2)}
+                                                ₹{inst.amountDue.toFixed(0)}
                                               </td>
                                               <td className="p-3 text-slate-500">
                                                 ₹
                                                 {Math.max(
                                                   0,
                                                   closing
-                                                ).toFixed(2)}
+                                                ).toFixed(0)}
                                               </td>
                                               <td className="p-3 pr-4 text-right">
                                                 {inst.status === "PAID" ? (
@@ -739,16 +739,16 @@ export default function AdminReportsPage() {
                               {row.monthYear}
                             </td>
                             <td className="p-4 text-emerald-600 font-medium">
-                              ₹{row.premium.toFixed(2)}
+                              ₹{row.premium.toFixed(0)}
                             </td>
                             <td className="p-4 text-indigo-600 font-medium">
-                              ₹{row.principal.toFixed(2)}
+                              ₹{row.principal.toFixed(0)}
                             </td>
                             <td className="p-4 text-rose-500 font-medium">
-                              ₹{row.interest.toFixed(2)}
+                              ₹{row.interest.toFixed(0)}
                             </td>
                             <td className="p-4 font-bold text-slate-900">
-                              ₹{row.total.toFixed(2)}
+                              ₹{row.total.toFixed(0)}
                             </td>
                           </tr>
                         ))

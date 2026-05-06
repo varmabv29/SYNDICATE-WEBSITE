@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syndicate Architecture Map</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true, theme: 'default' });
+    </script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: white; }
+        @media print {
+            .no-print { display: none !important; }
+            body { padding: 0 !important; margin: 0 !important; }
+            .page-break { page-break-before: always; }
+        }
+        .mermaid { display: flex; justify-content: center; margin: 2rem 0; }
+    </style>
+</head>
+<body class="p-8 max-w-5xl mx-auto text-slate-800 leading-relaxed">
+
+    <!-- Print Button -->
+    <div class="no-print bg-indigo-50 border border-indigo-200 p-6 rounded-xl mb-8 flex items-center justify-between shadow-sm">
+        <div>
+            <h2 class="text-lg font-bold text-indigo-900">Your Downloadable PDF is Ready!</h2>
+            <p class="text-sm text-indigo-700 mt-1">Click the button on the right, then select <strong>"Save as PDF"</strong> in the destination dropdown to save this document locally.</p>
+        </div>
+        <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-colors flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+            Save as PDF
+        </button>
+    </div>
+
+    <header class="text-center mb-12">
+        <h1 class="text-4xl font-extrabold text-slate-900 mb-4">Master Minds Syndicate</h1>
+        <p class="text-xl text-slate-500">Website Architecture & Code Map</p>
+    </header>
+
+    <div class="space-y-16">
+        <section>
+            <h2 class="text-2xl font-bold border-b-2 border-slate-200 pb-2 mb-6">1. Directory Structure Mind Map</h2>
+            <p class="text-slate-600 mb-4">The website is built using Next.js (App Router). The code is split between frontend pages (<code>src/app/</code>) and backend API routes (<code>src/app/api/</code>).</p>
+            <div class="mermaid bg-slate-50 p-6 rounded-xl border border-slate-200">
+                mindmap
+                  root((Syndicate App))
+                    src
+                      app
+                        api
+                          admin
+                          member
+                          shared
+                        admin
+                          dashboard
+                          loans
+                          expenditures
+                          reports
+                        member
+                          dashboard
+                          directory
+                          reports
+                      components
+                        (Reusable UI)
+                      lib
+                        (Utility Functions)
+                    prisma
+                      schema.prisma
+            </div>
+        </section>
+
+        <section class="page-break">
+            <h2 class="text-2xl font-bold border-b-2 border-slate-200 pb-2 mb-6">2. Database Structure (ERD)</h2>
+            <p class="text-slate-600 mb-4">The application uses MongoDB with Prisma ORM. Below is the Entity-Relationship Diagram showing how data is connected.</p>
+            <div class="mermaid bg-slate-50 p-6 rounded-xl border border-slate-200">
+                erDiagram
+                    USER ||--o{ PREMIUM : "pays"
+                    USER ||--o{ LOAN : "borrows"
+                    LOAN ||--o{ INSTALLMENT : "has"
+
+                    USER { string id string role }
+                    PREMIUM { float amount datetime datePaid }
+                    LOAN { float principalAmount string status }
+                    INSTALLMENT { float amountDue string status }
+                    EXPENDITURE { float amount boolean isChitPayment }
+            </div>
+        </section>
+
+        <section class="page-break">
+            <h2 class="text-2xl font-bold border-b-2 border-slate-200 pb-2 mb-6">3. User Flow Charts</h2>
+            
+            <h3 class="text-xl font-semibold mb-4 text-indigo-700">Admin Workflow</h3>
+            <div class="mermaid bg-slate-50 p-6 rounded-xl border border-slate-200 mb-8">
+                flowchart TD
+                    A[Admin Log In] --> B(Admin Dashboard)
+                    B --> C[Manage Users]
+                    B --> D[Record Premiums]
+                    B --> E[Manage Loans]
+                    B --> F[Log Expenditures]
+                    
+                    E --> E1[Approve Requests]
+                    E --> E2[Record Repayments]
+                    F --> |Standard| F1(Deducted from Pool)
+                    F --> |Chit Payment| F2(Adds to Member NAVs)
+            </div>
+
+            <h3 class="text-xl font-semibold mb-4 text-emerald-700">Member Workflow</h3>
+            <div class="mermaid bg-slate-50 p-6 rounded-xl border border-slate-200">
+                flowchart TD
+                    A[Member Log In] --> B(Member Dashboard)
+                    B --> C[View NAV & Chit Savings]
+                    B --> D[Submit Loan Request]
+                    B --> F(Download PDF Reports)
+                    B --> G(Member Directory)
+            </div>
+        </section>
+
+        <section class="page-break">
+            <h2 class="text-2xl font-bold border-b-2 border-slate-200 pb-2 mb-6">4. Core Logic & Math Formulas</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-indigo-50 border border-indigo-200 p-5 rounded-xl">
+                    <h3 class="font-bold text-indigo-900 mb-2">Net Asset Value (NAV)</h3>
+                    <p class="text-sm text-indigo-800">NAV = (Total Premiums Paid) + (Dividend Share) + (Chit Share)</p>
+                </div>
+                <div class="bg-emerald-50 border border-emerald-200 p-5 rounded-xl">
+                    <h3 class="font-bold text-emerald-900 mb-2">Dividend Share</h3>
+                    <p class="text-sm text-emerald-800">Share = (Sum of all interestPaid globally) / (Total Members)</p>
+                </div>
+                <div class="bg-amber-50 border border-amber-200 p-5 rounded-xl">
+                    <h3 class="font-bold text-amber-900 mb-2">Chit Savings</h3>
+                    <p class="text-sm text-amber-800">Share = (Sum of all Expenditures where isChitPayment=true) / (Total Members)</p>
+                </div>
+                <div class="bg-rose-50 border border-rose-200 p-5 rounded-xl">
+                    <h3 class="font-bold text-rose-900 mb-2">Cash In Hand</h3>
+                    <p class="text-sm text-rose-800">Total Cash = Inflow(Premiums+Repaid) - Outflow(Loans+Exp+Chits)</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold border-b-2 border-slate-200 pb-2 mb-6">5. Beginner's Fix Guide</h2>
+            <ul class="list-disc pl-5 space-y-3 text-slate-700">
+                <li><strong>UI/Visual Changes:</strong> Edit the files ending in <code>page.tsx</code> inside <code>src/app/</code>. Change the Tailwind classes for colors/spacing.</li>
+                <li><strong>Math/Logic Changes:</strong> Edit the backend API files in <code>src/app/api/.../route.ts</code>.</li>
+                <li><strong>PDF Report Formatting:</strong> Edit <code>src/lib/pdf-reports.ts</code> which uses jsPDF.</li>
+                <li><strong>Database Updates:</strong> Edit <code>prisma/schema.prisma</code> and then run <code>npx prisma db push</code>.</li>
+            </ul>
+        </section>
+    </div>
+</body>
+</html>

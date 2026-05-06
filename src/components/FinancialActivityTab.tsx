@@ -120,14 +120,14 @@ export default function FinancialActivityTab({ isAdmin, members = [] }: Props) {
     let csv = "";
     if (viewMode === "aggregated") {
       csv = "Type,Count,Total Amount (₹)\n";
-      csv += data.results.map((r) => `${r.type},${r.count || 0},${(r.totalAmount || 0).toFixed(2)}`).join("\n");
-      csv += `\nGRAND TOTAL,,${data.grandTotal.toFixed(2)}`;
+      csv += data.results.map((r) => `${r.type},${r.count || 0},${(r.totalAmount || 0).toFixed(0)}`).join("\n");
+      csv += `\nGRAND TOTAL,,${data.grandTotal.toFixed(0)}`;
     } else {
       csv = "#,Date,Type,Member,Description,Amount (₹)\n";
       csv += data.results.map((r, i) =>
-        `${i + 1},${formatDate(r.date || null)},${r.type},${r.memberName || "-"},${r.description || "-"},${(r.amount || 0).toFixed(2)}`
+        `${i + 1},${formatDate(r.date || null)},${r.type},${r.memberName || "-"},${r.description || "-"},${(r.amount || 0).toFixed(0)}`
       ).join("\n");
-      csv += `\n,,,,GRAND TOTAL,${data.grandTotal.toFixed(2)}`;
+      csv += `\n,,,,GRAND TOTAL,${data.grandTotal.toFixed(0)}`;
     }
     const blob = new Blob([csv], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
@@ -272,13 +272,13 @@ export default function FinancialActivityTab({ isAdmin, members = [] }: Props) {
                     }`}>{r.type}</span>
                   </td>
                   <td className="p-4 text-right text-slate-600">{r.count}</td>
-                  <td className="p-4 text-right font-bold text-slate-900">₹{(r.totalAmount || 0).toFixed(2)}</td>
+                  <td className="p-4 text-right font-bold text-slate-900">₹{(r.totalAmount || 0).toFixed(0)}</td>
                 </tr>
               ))}
               <tr className="bg-slate-100/80 border-t-2 border-slate-300">
                 <td className="p-4 font-bold text-slate-900 uppercase text-xs tracking-wider">Grand Total</td>
                 <td className="p-4" />
-                <td className="p-4 text-right font-extrabold text-slate-900 text-base">₹{data.grandTotal.toFixed(2)}</td>
+                <td className="p-4 text-right font-extrabold text-slate-900 text-base">₹{data.grandTotal.toFixed(0)}</td>
               </tr>
             </tbody>
           </table>
@@ -310,14 +310,14 @@ export default function FinancialActivityTab({ isAdmin, members = [] }: Props) {
                   </td>
                   <td className="p-4 text-slate-600">{r.memberName || "-"}</td>
                   <td className="p-4 text-slate-500 text-xs">{r.description || "-"}</td>
-                  <td className="p-4 text-right font-bold text-slate-900">₹{(r.amount || 0).toFixed(2)}</td>
+                  <td className="p-4 text-right font-bold text-slate-900">₹{(r.amount || 0).toFixed(0)}</td>
                 </tr>
               ))}
               <tr className="bg-slate-100/80 border-t-2 border-slate-300">
                 <td className="p-4" colSpan={5}>
                   <span className="font-bold text-slate-900 uppercase text-xs tracking-wider">Grand Total</span>
                 </td>
-                <td className="p-4 text-right font-extrabold text-slate-900 text-base">₹{data.grandTotal.toFixed(2)}</td>
+                <td className="p-4 text-right font-extrabold text-slate-900 text-base">₹{data.grandTotal.toFixed(0)}</td>
               </tr>
             </tbody>
           </table>

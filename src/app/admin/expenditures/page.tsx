@@ -100,7 +100,7 @@ export default function ExpendituresPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Amount (₹)</label>
-                <input required type="number" step="0.01" min="1" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 outline-none transition-all" value={formData.amount} onChange={e => setFormData({...formData, amount: e.target.value})} />
+                <input required type="number" step="1" min="1" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 outline-none transition-all" value={formData.amount} onChange={e => setFormData({...formData, amount: e.target.value})} />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -165,7 +165,7 @@ export default function ExpendituresPage() {
                                 <input type="text" className="w-full px-2 py-1.5 border border-indigo-300 rounded-md text-sm focus:ring-2 focus:ring-indigo-400 outline-none" value={editData.remarks} onChange={e => setEditData({...editData, remarks: e.target.value})} />
                               </td>
                               <td className="p-3">
-                                <input type="number" step="0.01" min="0" className="w-24 px-2 py-1.5 border border-indigo-300 rounded-md text-sm focus:ring-2 focus:ring-indigo-400 outline-none" value={editData.amount} onChange={e => setEditData({...editData, amount: e.target.value})} />
+                                <input type="number" step="1" min="0" className="w-24 px-2 py-1.5 border border-indigo-300 rounded-md text-sm focus:ring-2 focus:ring-indigo-400 outline-none" value={editData.amount} onChange={e => setEditData({...editData, amount: e.target.value})} />
                                 <div className="mt-1 flex items-center gap-1">
                                   <input type="checkbox" id={`editChit_${exp.id}`} className="w-3 h-3" checked={editData.isChitPayment} onChange={e => setEditData({...editData, isChitPayment: e.target.checked})} />
                                   <label htmlFor={`editChit_${exp.id}`} className="text-[10px] text-slate-500">Chit</label>
@@ -188,7 +188,7 @@ export default function ExpendituresPage() {
                               <td className="p-4 text-slate-500 font-mono text-xs">{exp.monthYear}</td>
                               <td className="p-4 text-slate-600 truncate max-w-[200px]" title={exp.remarks ?? undefined}>{exp.remarks || '-'}</td>
                               <td className="p-4 font-bold text-rose-600">
-                                ₹{exp.amount.toFixed(2)}
+                                ₹{exp.amount.toFixed(0)}
                                 {exp.isChitPayment && (
                                   <span className="ml-2 inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20">
                                     Chit

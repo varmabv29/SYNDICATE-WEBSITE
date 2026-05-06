@@ -107,7 +107,7 @@ export default function LoanRequestsModal({
                     </div>
                     <div className="flex items-start gap-4 text-right">
                       <div>
-                        <div className="text-xl font-bold text-indigo-600">₹{req.amount.toFixed(2)}</div>
+                        <div className="text-xl font-bold text-indigo-600">₹{req.amount.toFixed(0)}</div>
                         <div className="text-sm font-medium text-slate-600 mt-0.5">{req.monthYear}</div>
                       </div>
                       {req.userId === currentUserId && (

@@ -81,7 +81,7 @@ export default function MemberDashboardPage() {
       const opening = currentBalance;
       const closing = opening - inst.principalDue;
       currentBalance = closing;
-      return `${inst.monthYear},${opening.toFixed(2)},${inst.principalDue.toFixed(2)},${inst.interestDue.toFixed(2)},${inst.amountDue.toFixed(2)},${Math.max(0, closing).toFixed(2)},${inst.status}`;
+      return `${inst.monthYear},${opening.toFixed(0)},${inst.principalDue.toFixed(0)},${inst.interestDue.toFixed(0)},${inst.amountDue.toFixed(0)},${Math.max(0, closing).toFixed(0)},${inst.status}`;
     }).join("\n");
     
     const blob = new Blob([headers + rows], { type: 'text/csv' });
@@ -143,7 +143,7 @@ export default function MemberDashboardPage() {
                <TrendingUp className="w-5 h-5" />
              </div>
            </div>
-           <div className="text-3xl font-bold">₹{summary.nav.toFixed(2)}</div>
+           <div className="text-3xl font-bold">₹{summary.nav.toFixed(0)}</div>
             <p className="text-xs text-indigo-200 mt-2 flex flex-col gap-1">
              <span className="flex justify-between"><span>Premium:</span> <span>₹{summary.totalPremiumsPaid.toFixed(0)}</span></span>
              <span className="flex justify-between font-medium"><span>Dividend:</span> <span>+ ₹{summary.dividendEarned.toFixed(0)}</span></span>
@@ -159,9 +159,9 @@ export default function MemberDashboardPage() {
              </div>
            </div>
            <div className="flex items-end gap-3">
-             <div className="text-3xl font-bold text-amber-900">₹{summary.totalChitContributions?.toFixed(2) || '0.00'}</div>
+             <div className="text-3xl font-bold text-amber-900">₹{summary.totalChitContributions?.toFixed(0) || '0'}</div>
              <div className="text-sm font-semibold text-amber-700 bg-amber-100 px-2 py-1 rounded-md mb-1 border border-amber-200/50">
-               My Share: ₹{summary.chitShare?.toFixed(2) || '0.00'}
+               My Share: ₹{summary.chitShare?.toFixed(0) || '0'}
              </div>
            </div>
            <p className="text-xs text-amber-700/80 mt-2">Group's total chit pool and your allocated share</p>
@@ -173,7 +173,7 @@ export default function MemberDashboardPage() {
                <CreditCard className="w-5 h-5" />
              </div>
            </div>
-           <div className="text-3xl font-bold text-slate-900">₹{summary.totalPremiumsPaid.toFixed(2)}</div>
+           <div className="text-3xl font-bold text-slate-900">₹{summary.totalPremiumsPaid.toFixed(0)}</div>
            <p className="text-sm text-slate-500 mt-1">{premiums.length} total payments made</p>
          </div>
 
@@ -184,7 +184,7 @@ export default function MemberDashboardPage() {
                <Receipt className="w-5 h-5" />
              </div>
            </div>
-           <div className="text-3xl font-bold text-rose-700">₹{summary.totalExpenditures.toFixed(2)}</div>
+           <div className="text-3xl font-bold text-rose-700">₹{summary.totalExpenditures.toFixed(0)}</div>
            <p className="text-xs text-rose-600/80 mt-1">Deducted from global cash pool</p>
          </div>
          
@@ -195,7 +195,7 @@ export default function MemberDashboardPage() {
                <HandCoins className="w-5 h-5" />
              </div>
            </div>
-           <div className="text-3xl font-bold text-slate-900">₹{remainingBalance.toFixed(2)}</div>
+           <div className="text-3xl font-bold text-slate-900">₹{remainingBalance.toFixed(0)}</div>
            <div className="text-xs text-slate-500 mt-1 flex justify-between">
              <span>Borrowed: ₹{totalBorrowed.toFixed(0)}</span>
              <span className="text-emerald-600 font-medium">Repaid: ₹{totalRepaid.toFixed(0)}</span>
@@ -211,7 +211,7 @@ export default function MemberDashboardPage() {
            </div>
            {upcomingInstallment ? (
              <>
-               <div className="text-3xl font-bold text-slate-900">₹{upcomingInstallment.amountDue.toFixed(2)}</div>
+               <div className="text-3xl font-bold text-slate-900">₹{upcomingInstallment.amountDue.toFixed(0)}</div>
                <p className="text-sm text-slate-600 font-medium mt-1">Due {formatDate(upcomingInstallment.dueDate)}</p>
              </>
            ) : (
@@ -266,11 +266,11 @@ export default function MemberDashboardPage() {
             </div>
             <div>
               <div className="text-sm font-medium text-slate-500">Principal Repaid</div>
-              <div className="text-2xl font-bold text-indigo-600 mt-1">₹{summaryData.totalPrincipalRepaid.toFixed(2)}</div>
+              <div className="text-2xl font-bold text-indigo-600 mt-1">₹{summaryData.totalPrincipalRepaid.toFixed(0)}</div>
             </div>
             <div>
               <div className="text-sm font-medium text-slate-500">Interest Paid</div>
-              <div className="text-2xl font-bold text-amber-600 mt-1">₹{summaryData.totalInterestCollected.toFixed(2)}</div>
+              <div className="text-2xl font-bold text-amber-600 mt-1">₹{summaryData.totalInterestCollected.toFixed(0)}</div>
             </div>
           </div>
         ) : (
@@ -312,7 +312,7 @@ export default function MemberDashboardPage() {
                  <div key={loan.id} className="border-b-4 border-slate-200 last:border-0">
                    <div className="p-4 bg-slate-50/50 flex items-center justify-between border-b border-slate-200">
                      <div>
-                       <div className="font-bold text-slate-900">Loan Principal: ₹{loan.principalAmount.toFixed(2)}</div>
+                       <div className="font-bold text-slate-900">Loan Principal: ₹{loan.principalAmount.toFixed(0)}</div>
                        {loan.status === "FORECLOSED" && loan.settlementAmount && (
                          <div className="text-xs text-rose-600 flex items-center gap-1 font-medium mt-1">
                            <AlertTriangle className="w-3.5 h-3.5" /> Foreclosed in {loan.foreclosureMonth} (Settled for ₹{loan.settlementAmount})
@@ -350,11 +350,11 @@ export default function MemberDashboardPage() {
                            return (
                              <tr key={inst.id} className="hover:bg-slate-50 transition-colors">
                                <td className="p-3 pl-4 font-medium text-slate-900">{inst.monthYear || formatDate(inst.dueDate)}</td>
-                               <td className="p-3 text-slate-500">₹{opening.toFixed(2)}</td>
-                               <td className="p-3 text-emerald-600">₹{inst.principalDue.toFixed(2)}</td>
-                               <td className="p-3 text-rose-500">₹{inst.interestDue.toFixed(2)}</td>
-                               <td className="p-3 font-bold text-slate-900">₹{inst.amountDue.toFixed(2)}</td>
-                               <td className="p-3 text-slate-500">₹{Math.max(0, closing).toFixed(2)}</td>
+                               <td className="p-3 text-slate-500">₹{opening.toFixed(0)}</td>
+                               <td className="p-3 text-emerald-600">₹{inst.principalDue.toFixed(0)}</td>
+                               <td className="p-3 text-rose-500">₹{inst.interestDue.toFixed(0)}</td>
+                               <td className="p-3 font-bold text-slate-900">₹{inst.amountDue.toFixed(0)}</td>
+                               <td className="p-3 text-slate-500">₹{Math.max(0, closing).toFixed(0)}</td>
                                <td className="p-3 pr-4 text-right">
                                  {inst.status === "PAID" ? (
                                    <span className="inline-flex items-center gap-1 text-emerald-600 text-[10px] font-bold uppercase bg-emerald-50 px-2 py-0.5 rounded">
@@ -403,7 +403,7 @@ export default function MemberDashboardPage() {
             <form onSubmit={handleRequestLoan} className="p-6 space-y-4 bg-slate-50 border-b border-slate-200">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Requested Amount (₹)</label>
-                <input required type="number" min="1" step="0.01" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white" placeholder="e.g. 10000" value={requestForm.amount} onChange={e => setRequestForm({...requestForm, amount: e.target.value})} />
+                <input required type="number" min="1" step="1" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white" placeholder="e.g. 10000" value={requestForm.amount} onChange={e => setRequestForm({...requestForm, amount: e.target.value})} />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Month & Year Details</label>

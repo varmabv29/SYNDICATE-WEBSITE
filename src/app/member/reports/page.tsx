@@ -136,7 +136,7 @@ export default function MemberReportsPage() {
     const rows = report.premiums
       .map((p) => {
         runningTotal += p.amount;
-        return `${formatDate(p.datePaid)},${p.amount.toFixed(2)},${runningTotal.toFixed(2)}`;
+        return `${formatDate(p.datePaid)},${p.amount.toFixed(0)},${runningTotal.toFixed(0)}`;
       })
       .join("\n");
     downloadCSV(headers + rows, `Premium_Statement_${report.targetUser.username}.csv`);
@@ -148,7 +148,7 @@ export default function MemberReportsPage() {
     const rows = report.paidInstallments
       .map((i) => {
         const principalPaid = i.amountPaid - i.interestPaid;
-        return `${formatDate(i.paidDate)},${i.loan.customId},${i.monthYear},${principalPaid.toFixed(2)},${i.interestPaid.toFixed(2)},${i.amountPaid.toFixed(2)}`;
+        return `${formatDate(i.paidDate)},${i.loan.customId},${i.monthYear},${principalPaid.toFixed(0)},${i.interestPaid.toFixed(0)},${i.amountPaid.toFixed(0)}`;
       })
       .join("\n");
     downloadCSV(headers + rows, `Payment_Statement_${report.targetUser.username}.csv`);
@@ -162,7 +162,7 @@ export default function MemberReportsPage() {
         const opening = balance;
         const closing = opening - inst.principalDue;
         balance = closing;
-        return `${inst.monthYear},${opening.toFixed(2)},${inst.principalDue.toFixed(2)},${inst.interestDue.toFixed(2)},${inst.amountDue.toFixed(2)},${Math.max(0, closing).toFixed(2)},${inst.status}`;
+        return `${inst.monthYear},${opening.toFixed(0)},${inst.principalDue.toFixed(0)},${inst.interestDue.toFixed(0)},${inst.amountDue.toFixed(0)},${Math.max(0, closing).toFixed(0)},${inst.status}`;
       })
       .join("\n");
     downloadCSV(headers + rows, `Loan_${loan.customId}_Schedule.csv`);
@@ -368,8 +368,8 @@ export default function MemberReportsPage() {
                               <tr key={p.id} className="hover:bg-slate-50 transition-colors">
                                 <td className="p-4 text-slate-400 font-mono text-xs">{idx + 1}</td>
                                 <td className="p-4 font-medium text-slate-800">{formatDate(p.datePaid)}</td>
-                                <td className="p-4 text-indigo-600 font-bold">₹{p.amount.toFixed(2)}</td>
-                                <td className="p-4 font-bold text-slate-900">₹{runningTotal.toFixed(2)}</td>
+                                <td className="p-4 text-indigo-600 font-bold">₹{p.amount.toFixed(0)}</td>
+                                <td className="p-4 font-bold text-slate-900">₹{runningTotal.toFixed(0)}</td>
                               </tr>
                             );
                           });
@@ -475,11 +475,11 @@ export default function MemberReportsPage() {
                                         return (
                                           <tr key={inst.id} className="hover:bg-slate-50/50 transition-colors">
                                             <td className="p-3 pl-4 font-medium text-slate-800">{inst.monthYear || formatDate(inst.dueDate)}</td>
-                                            <td className="p-3 text-slate-500">₹{opening.toFixed(2)}</td>
-                                            <td className="p-3 text-emerald-600">₹{inst.principalDue.toFixed(2)}</td>
-                                            <td className="p-3 text-rose-500">₹{inst.interestDue.toFixed(2)}</td>
-                                            <td className="p-3 font-bold text-slate-900">₹{inst.amountDue.toFixed(2)}</td>
-                                            <td className="p-3 text-slate-500">₹{Math.max(0, closing).toFixed(2)}</td>
+                                            <td className="p-3 text-slate-500">₹{opening.toFixed(0)}</td>
+                                            <td className="p-3 text-emerald-600">₹{inst.principalDue.toFixed(0)}</td>
+                                            <td className="p-3 text-rose-500">₹{inst.interestDue.toFixed(0)}</td>
+                                            <td className="p-3 font-bold text-slate-900">₹{inst.amountDue.toFixed(0)}</td>
+                                            <td className="p-3 text-slate-500">₹{Math.max(0, closing).toFixed(0)}</td>
                                             <td className="p-3 pr-4 text-right">
                                               {inst.status === "PAID" ? (
                                                 <span className="inline-flex items-center gap-1 text-emerald-600 text-[10px] bg-emerald-50 font-bold uppercase px-2 py-0.5 rounded">
@@ -553,9 +553,9 @@ export default function MemberReportsPage() {
                                 </span>
                               </td>
                               <td className="p-4 text-slate-600">{inst.monthYear}</td>
-                              <td className="p-4 text-emerald-600 font-semibold">₹{principalPaid.toFixed(2)}</td>
-                              <td className="p-4 text-rose-500 font-semibold">₹{inst.interestPaid.toFixed(2)}</td>
-                              <td className="p-4 font-bold text-slate-900">₹{inst.amountPaid.toFixed(2)}</td>
+                              <td className="p-4 text-emerald-600 font-semibold">₹{principalPaid.toFixed(0)}</td>
+                              <td className="p-4 text-rose-500 font-semibold">₹{inst.interestPaid.toFixed(0)}</td>
+                              <td className="p-4 font-bold text-slate-900">₹{inst.amountPaid.toFixed(0)}</td>
                             </tr>
                           );
                         })

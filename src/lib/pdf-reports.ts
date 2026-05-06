@@ -188,8 +188,8 @@ export async function downloadPremiumPDF(
     return [
       String(idx + 1),
       formatDate(p.datePaid),
-      `₹${p.amount.toFixed(2)}`,
-      `₹${runningTotal.toFixed(2)}`,
+      `₹${p.amount.toFixed(0)}`,
+      `₹${runningTotal.toFixed(0)}`,
     ];
   });
 
@@ -291,11 +291,11 @@ export async function downloadLoanPDF(
     balance = closing;
     return [
       inst.monthYear,
-      `₹${opening.toFixed(2)}`,
-      `₹${inst.principalDue.toFixed(2)}`,
-      `₹${inst.interestDue.toFixed(2)}`,
-      `₹${inst.amountDue.toFixed(2)}`,
-      `₹${Math.max(0, closing).toFixed(2)}`,
+      `₹${opening.toFixed(0)}`,
+      `₹${inst.principalDue.toFixed(0)}`,
+      `₹${inst.interestDue.toFixed(0)}`,
+      `₹${inst.amountDue.toFixed(0)}`,
+      `₹${Math.max(0, closing).toFixed(0)}`,
       inst.status,
     ];
   });
@@ -376,10 +376,10 @@ export async function downloadMonthWisePDF(
       String(idx + 1),
       row.memberName,
       row.monthYear,
-      `₹${row.premium.toFixed(2)}`,
-      `₹${row.principal.toFixed(2)}`,
-      `₹${row.interest.toFixed(2)}`,
-      `₹${row.total.toFixed(2)}`,
+      `₹${row.premium.toFixed(0)}`,
+      `₹${row.principal.toFixed(0)}`,
+      `₹${row.interest.toFixed(0)}`,
+      `₹${row.total.toFixed(0)}`,
     ];
   });
 
@@ -421,10 +421,10 @@ export async function downloadMonthWisePDF(
   doc.setTextColor(255, 255, 255);
   doc.text("TOTALS:", 20, finalY + 5.5);
   doc.setTextColor(...ACCENT_GOLD);
-  doc.text(`₹${totalPremium.toFixed(2)}`, doc.internal.pageSize.getWidth() - 110, finalY + 5.5, { align: "right" });
-  doc.text(`₹${totalPrincipal.toFixed(2)}`, doc.internal.pageSize.getWidth() - 80, finalY + 5.5, { align: "right" });
-  doc.text(`₹${totalInterest.toFixed(2)}`, doc.internal.pageSize.getWidth() - 48, finalY + 5.5, { align: "right" });
-  doc.text(`₹${totalAmount.toFixed(2)}`, doc.internal.pageSize.getWidth() - 14, finalY + 5.5, { align: "right" });
+  doc.text(`₹${totalPremium.toFixed(0)}`, doc.internal.pageSize.getWidth() - 110, finalY + 5.5, { align: "right" });
+  doc.text(`₹${totalPrincipal.toFixed(0)}`, doc.internal.pageSize.getWidth() - 80, finalY + 5.5, { align: "right" });
+  doc.text(`₹${totalInterest.toFixed(0)}`, doc.internal.pageSize.getWidth() - 48, finalY + 5.5, { align: "right" });
+  doc.text(`₹${totalAmount.toFixed(0)}`, doc.internal.pageSize.getWidth() - 14, finalY + 5.5, { align: "right" });
 
   // Footer
   const pageCount = doc.getNumberOfPages();
@@ -520,20 +520,20 @@ export async function downloadProjectedPDF(
   const tableData = projections.map((p, idx) => [
     String(idx + 1),
     p.memberName,
-    `₹${p.baseContribution.toFixed(2)}`,
-    `₹${p.loanInstallmentPrincipal.toFixed(2)}`,
-    `₹${p.accruedInterest.toFixed(2)}`,
-    `₹${p.totalDue.toFixed(2)}`,
+    `₹${p.baseContribution.toFixed(0)}`,
+    `₹${p.loanInstallmentPrincipal.toFixed(0)}`,
+    `₹${p.accruedInterest.toFixed(0)}`,
+    `₹${p.totalDue.toFixed(0)}`,
   ]);
 
   // Grand total row
   tableData.push([
     "",
     "GRAND TOTAL",
-    `₹${grandTotal.baseContribution.toFixed(2)}`,
-    `₹${grandTotal.loanInstallmentPrincipal.toFixed(2)}`,
-    `₹${grandTotal.accruedInterest.toFixed(2)}`,
-    `₹${grandTotal.totalDue.toFixed(2)}`,
+    `₹${grandTotal.baseContribution.toFixed(0)}`,
+    `₹${grandTotal.loanInstallmentPrincipal.toFixed(0)}`,
+    `₹${grandTotal.accruedInterest.toFixed(0)}`,
+    `₹${grandTotal.totalDue.toFixed(0)}`,
   ]);
 
   autoTable(doc, {
@@ -620,10 +620,10 @@ export async function downloadActivityPDF(
     const tableData = results.map((r) => [
       r.type,
       String(r.count || 0),
-      `₹${(r.totalAmount || 0).toFixed(2)}`,
+      `₹${(r.totalAmount || 0).toFixed(0)}`,
     ]);
 
-    tableData.push(["GRAND TOTAL", "", `₹${grandTotal.toFixed(2)}`]);
+    tableData.push(["GRAND TOTAL", "", `₹${grandTotal.toFixed(0)}`]);
 
     autoTable(doc, {
       startY: y,
@@ -658,7 +658,7 @@ export async function downloadActivityPDF(
       r.type,
       r.memberName || "-",
       r.description || "-",
-      `₹${(r.amount || 0).toFixed(2)}`,
+      `₹${(r.amount || 0).toFixed(0)}`,
     ]);
 
     autoTable(doc, {
@@ -692,7 +692,7 @@ export async function downloadActivityPDF(
     doc.setTextColor(255, 255, 255);
     doc.text("GRAND TOTAL:", 20, finalY + 5.5);
     doc.setTextColor(...ACCENT_GOLD);
-    doc.text(`₹${grandTotal.toFixed(2)}`, doc.internal.pageSize.getWidth() - 14, finalY + 5.5, { align: "right" });
+    doc.text(`₹${grandTotal.toFixed(0)}`, doc.internal.pageSize.getWidth() - 14, finalY + 5.5, { align: "right" });
   }
 
   // Footer
@@ -743,9 +743,9 @@ export async function downloadPaymentsPDF(
       formatDate(inst.paidDate),
       inst.loan.customId,
       inst.monthYear,
-      `₹${principalPaid.toFixed(2)}`,
-      `₹${inst.interestPaid.toFixed(2)}`,
-      `₹${inst.amountPaid.toFixed(2)}`,
+      `₹${principalPaid.toFixed(0)}`,
+      `₹${inst.interestPaid.toFixed(0)}`,
+      `₹${inst.amountPaid.toFixed(0)}`,
     ];
   });
 
@@ -787,9 +787,9 @@ export async function downloadPaymentsPDF(
   doc.setTextColor(255, 255, 255);
   doc.text("TOTALS:", 20, finalY + 5.5);
   doc.setTextColor(...ACCENT_GOLD);
-  doc.text(`₹${totalPrincipal.toFixed(2)}`, doc.internal.pageSize.getWidth() - 80, finalY + 5.5, { align: "right" });
-  doc.text(`₹${totalInterest.toFixed(2)}`, doc.internal.pageSize.getWidth() - 48, finalY + 5.5, { align: "right" });
-  doc.text(`₹${totalAmount.toFixed(2)}`, doc.internal.pageSize.getWidth() - 14, finalY + 5.5, { align: "right" });
+  doc.text(`₹${totalPrincipal.toFixed(0)}`, doc.internal.pageSize.getWidth() - 80, finalY + 5.5, { align: "right" });
+  doc.text(`₹${totalInterest.toFixed(0)}`, doc.internal.pageSize.getWidth() - 48, finalY + 5.5, { align: "right" });
+  doc.text(`₹${totalAmount.toFixed(0)}`, doc.internal.pageSize.getWidth() - 14, finalY + 5.5, { align: "right" });
 
   // Footer
   const pageCount = doc.getNumberOfPages();
