@@ -36,13 +36,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <nav className="flex-1 space-y-1">
         {links.map((link) => {
           const Icon = link.icon;
-          const active = pathname === link.href;
+          const active = pathname === link.href || (link.href !== "/admin" && pathname.startsWith(link.href + "/"));
           return (
             <Link 
               key={link.href} 
               href={link.href}
               onClick={() => setSidebarOpen(false)}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 cursor-pointer ${
                 active ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/20" : "text-slate-400 hover:bg-slate-800 hover:text-white"
               }`}
             >
@@ -74,7 +74,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="md:hidden sticky top-0 z-40 bg-slate-900 text-white flex items-center justify-between px-4 py-3 shadow-lg">
         <button 
           onClick={() => setSidebarOpen(true)}
-          className="p-2 rounded-lg hover:bg-slate-800 transition-colors"
+          className="p-3 -ml-2 rounded-lg hover:bg-slate-800 transition-colors"
           aria-label="Open menu"
         >
           <Menu className="w-5 h-5" />
@@ -98,7 +98,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Navigation</span>
               <button 
                 onClick={() => setSidebarOpen(false)}
-                className="p-2 rounded-lg hover:bg-slate-800 transition-colors text-slate-400"
+                className="p-3 -mr-2 rounded-lg hover:bg-slate-800 transition-colors text-slate-400"
                 aria-label="Close menu"
               >
                 <X className="w-5 h-5" />

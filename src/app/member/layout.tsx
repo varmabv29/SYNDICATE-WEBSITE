@@ -15,11 +15,11 @@ export default function MemberLayout({ children }: { children: React.ReactNode }
   if (!session || !session.user) return <div className="p-8">Access Denied</div>;
 
   const links = [
-    { href: "/member/dashboard", label: "My Dashboard", icon: LayoutDashboard },
-    { href: "/member/summary", label: "Syndicate Summary", icon: TrendingUp },
-    { href: "/member/loans", label: "Group Loans", icon: Banknote },
+    { href: "/member/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/member/summary", label: "Summary", icon: TrendingUp },
+    { href: "/member/loans", label: "Loans", icon: Banknote },
     { href: "/member/reports", label: "Reports", icon: FileBarChart },
-    { href: "/member/directory", label: "Member Directory", icon: Users },
+    { href: "/member/directory", label: "Members", icon: Users },
   ];
 
   const sidebarContent = (
@@ -32,13 +32,13 @@ export default function MemberLayout({ children }: { children: React.ReactNode }
       <nav className="flex-1 space-y-1">
         {links.map((link) => {
           const Icon = link.icon;
-          const active = pathname === link.href;
+          const active = pathname === link.href || (link.href !== "/member" && pathname.startsWith(link.href + "/"));
           return (
             <Link 
               key={link.href} 
               href={link.href}
               onClick={() => setSidebarOpen(false)}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 cursor-pointer ${
                 active ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20" : "text-indigo-200 hover:bg-indigo-900/50 hover:text-white"
               }`}
             >
@@ -70,7 +70,7 @@ export default function MemberLayout({ children }: { children: React.ReactNode }
       <div className="md:hidden sticky top-0 z-40 bg-indigo-950 text-white flex items-center justify-between px-4 py-3 shadow-lg">
         <button 
           onClick={() => setSidebarOpen(true)}
-          className="p-2 rounded-lg hover:bg-indigo-900 transition-colors"
+          className="p-3 -ml-2 rounded-lg hover:bg-indigo-900 transition-colors"
           aria-label="Open menu"
         >
           <Menu className="w-5 h-5" />
@@ -94,7 +94,7 @@ export default function MemberLayout({ children }: { children: React.ReactNode }
               <span className="text-xs font-semibold uppercase tracking-wider text-indigo-400">Navigation</span>
               <button 
                 onClick={() => setSidebarOpen(false)}
-                className="p-2 rounded-lg hover:bg-indigo-900 transition-colors text-indigo-300"
+                className="p-3 -mr-2 rounded-lg hover:bg-indigo-900 transition-colors text-indigo-300"
                 aria-label="Close menu"
               >
                 <X className="w-5 h-5" />

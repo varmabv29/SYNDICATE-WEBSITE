@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'Syndicate',
   webDir: 'public',
   server: {
-    url: 'http://192.168.1.10:3000',
+    url: 'http://192.168.1.7:3000',
     cleartext: true
   }
 };

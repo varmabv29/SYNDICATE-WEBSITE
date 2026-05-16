@@ -288,16 +288,18 @@ export default function MemberDashboardPage() {
               <History className="w-5 h-5 text-indigo-500" />
               Month-Wise Repayment Schedule
             </h2>
-            <div className="flex bg-slate-200/60 p-1 rounded-lg">
+            <div className="flex bg-slate-200/60 p-1 rounded-lg w-full max-w-[200px]">
               <button 
+                type="button"
                 onClick={() => setFilter('ACTIVE')}
-                className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${filter === 'ACTIVE' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
+                className={`flex-1 px-3 py-1.5 text-xs font-bold rounded-md transition-all ${filter === 'ACTIVE' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
               >
                 Active
               </button>
               <button 
+                type="button"
                 onClick={() => setFilter('SETTLED')} // SETTLED includes FORECLOSED in visual filtering logic
-                className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${filter === 'SETTLED' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
+                className={`flex-1 px-3 py-1.5 text-xs font-bold rounded-md transition-all ${filter === 'SETTLED' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
               >
                 Closed
               </button>

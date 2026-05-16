@@ -376,19 +376,20 @@ export default function AdminReportsPage() {
               ? `${report.targetUser.name}'s Reports`
               : "Reports"}
           </h2>
-          <div className="flex bg-slate-200/60 p-1 rounded-lg">
+          <div className="flex bg-slate-200/60 p-1 rounded-lg w-full overflow-x-auto no-scrollbar">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               return (
                 <button
                   key={tab.key}
+                  type="button"
                   onClick={() => setActiveTab(tab.key)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 ${activeTab === tab.key
+                  className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-bold rounded-md transition-all duration-200 whitespace-nowrap ${activeTab === tab.key
                     ? "bg-white shadow-sm text-slate-900"
-                    : "text-slate-500 hover:text-slate-700"
+                    : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
                     }`}
                 >
-                  <Icon className="w-3.5 h-3.5" />
+                  <Icon className="w-4 h-4" />
                   <span className="hidden sm:inline">{tab.label}</span>
                 </button>
               );
