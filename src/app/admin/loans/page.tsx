@@ -89,38 +89,38 @@ export default function LoansManagerPage() {
             <form onSubmit={handleDisburse} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Select Member</label>
-                <select required className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white" value={formData.userId} onChange={e => setFormData({...formData, userId: e.target.value})}>
-                  <option value="" disabled>Choose a member...</option>
+                <select required className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-slate-50 text-slate-900 font-medium" value={formData.userId} onChange={e => setFormData({...formData, userId: e.target.value})}>
+                  <option value="" disabled className="bg-white">Choose a member...</option>
                   {users.map((u: UserInfo) => (
-                    <option key={u.id} value={u.id}>{u.name} (@{u.username})</option>
+                    <option key={u.id} value={u.id} className="bg-white">{u.name} (@{u.username})</option>
                   ))}
                 </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Principal Amount (₹)</label>
-                <input required type="number" step="1" min="1" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all" value={formData.principalAmount} onChange={e => setFormData({...formData, principalAmount: e.target.value})} />
+                <input required type="number" step="1" min="1" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-slate-50 text-slate-900 font-medium" value={formData.principalAmount} onChange={e => setFormData({...formData, principalAmount: e.target.value})} />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Interest Rate</label>
-                <select className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white" value={formData.interestRate} onChange={e => setFormData({...formData, interestRate: e.target.value})}>
-                  <option value="1">1% Fixed</option>
-                  <option value="1.5">1.5% Fixed</option>
-                  <option value="2">2% Fixed</option>
+                <select className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-slate-50 text-slate-900 font-medium" value={formData.interestRate} onChange={e => setFormData({...formData, interestRate: e.target.value})}>
+                  <option value="1" className="bg-white">1% Fixed</option>
+                  <option value="1.5" className="bg-white">1.5% Fixed</option>
+                  <option value="2" className="bg-white">2% Fixed</option>
                 </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Duration (Months)</label>
-                <select className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white" value={formData.durationMonths} onChange={e => setFormData({...formData, durationMonths: e.target.value})}>
-                  <option value="3">3 Months</option>
-                  <option value="6">6 Months</option>
-                  <option value="10">10 Months</option>
-                  <option value="12">12 Months</option>
-                  <option value="24">24 Months</option>
+                <select className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-slate-50 text-slate-900 font-medium" value={formData.durationMonths} onChange={e => setFormData({...formData, durationMonths: e.target.value})}>
+                  <option value="3" className="bg-white">3 Months</option>
+                  <option value="6" className="bg-white">6 Months</option>
+                  <option value="10" className="bg-white">10 Months</option>
+                  <option value="12" className="bg-white">12 Months</option>
+                  <option value="24" className="bg-white">24 Months</option>
                 </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Start Date (Optional)</label>
-                <input type="date" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all" value={formData.startDate} onChange={e => setFormData({...formData, startDate: e.target.value})} />
+                <input type="date" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-slate-50 text-slate-900 font-medium" value={formData.startDate} onChange={e => setFormData({...formData, startDate: e.target.value})} />
               </div>
               
               <button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 rounded-lg transition-colors">

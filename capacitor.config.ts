@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'Syndicate',
   webDir: 'public',
   server: {
-    url: 'http://192.168.1.7:3000',
+    url: 'https://syndicate-website-theta.vercel.app/',
     cleartext: true
   }
 };

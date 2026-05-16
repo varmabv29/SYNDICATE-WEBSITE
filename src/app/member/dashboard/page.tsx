@@ -405,27 +405,27 @@ export default function MemberDashboardPage() {
             <form onSubmit={handleRequestLoan} className="p-6 space-y-4 bg-slate-50 border-b border-slate-200">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Requested Amount (₹)</label>
-                <input required type="number" min="1" step="1" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white" placeholder="e.g. 10000" value={requestForm.amount} onChange={e => setRequestForm({...requestForm, amount: e.target.value})} />
+                <input required type="number" min="1" step="1" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-slate-50 text-slate-900 font-medium" placeholder="e.g. 10000" value={requestForm.amount} onChange={e => setRequestForm({...requestForm, amount: e.target.value})} />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Month & Year Details</label>
-                <input required type="text" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white" placeholder="e.g. November 2024" value={requestForm.monthYear} onChange={e => setRequestForm({...requestForm, monthYear: e.target.value})} />
+                <input required type="text" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-slate-50 text-slate-900 font-medium" placeholder="e.g. November 2024" value={requestForm.monthYear} onChange={e => setRequestForm({...requestForm, monthYear: e.target.value})} />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Repayment Tenure (Months)</label>
-                <input required type="number" min="1" max="60" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white" placeholder="e.g. 6" value={requestForm.durationMonths} onChange={e => setRequestForm({...requestForm, durationMonths: e.target.value})} />
+                <input required type="number" min="1" max="60" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-slate-50 text-slate-900 font-medium" placeholder="e.g. 6" value={requestForm.durationMonths} onChange={e => setRequestForm({...requestForm, durationMonths: e.target.value})} />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Priority</label>
-                <select className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white" value={requestForm.priority} onChange={e => setRequestForm({...requestForm, priority: e.target.value})}>
-                  <option value="Low">Low Priority</option>
-                  <option value="Medium">Medium Priority</option>
-                  <option value="High">High Priority</option>
+                <select className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-slate-50 text-slate-900 font-medium" value={requestForm.priority} onChange={e => setRequestForm({...requestForm, priority: e.target.value})}>
+                  <option value="Low" className="bg-white">Low Priority</option>
+                  <option value="Medium" className="bg-white">Medium Priority</option>
+                  <option value="High" className="bg-white">High Priority</option>
                 </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Remarks / Reason (Optional)</label>
-                <textarea rows={3} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white resize-none" placeholder="Medical emergency, vacation, etc." value={requestForm.remarks} onChange={e => setRequestForm({...requestForm, remarks: e.target.value})} />
+                <textarea rows={3} className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-slate-50 text-slate-900 font-medium resize-none" placeholder="Medical emergency, vacation, etc." value={requestForm.remarks} onChange={e => setRequestForm({...requestForm, remarks: e.target.value})} />
               </div>
               
               <div className="pt-2 flex justify-end gap-3">

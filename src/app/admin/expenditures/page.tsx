@@ -100,21 +100,21 @@ export default function ExpendituresPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Amount (₹)</label>
-                <input required type="number" step="1" min="1" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 outline-none transition-all" value={formData.amount} onChange={e => setFormData({...formData, amount: e.target.value})} />
+                <input required type="number" step="1" min="1" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 outline-none transition-all bg-white !text-red-600 !font-bold" style={{ color: 'red', fontWeight: 'bold' }} value={formData.amount} onChange={e => setFormData({...formData, amount: e.target.value})} />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Date</label>
-                  <input required type="date" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 outline-none transition-all bg-white" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} />
+                  <input required type="date" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 outline-none transition-all bg-white !text-red-600 !font-bold" style={{ color: 'red', fontWeight: 'bold' }} value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Month-Year Mapping</label>
-                  <input required type="month" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 outline-none transition-all bg-white" value={formData.monthYear} onChange={e => setFormData({...formData, monthYear: e.target.value})} />
+                  <input required type="month" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 outline-none transition-all bg-white !text-red-600 !font-bold" style={{ color: 'red', fontWeight: 'bold' }} value={formData.monthYear} onChange={e => setFormData({...formData, monthYear: e.target.value})} />
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Remarks</label>
-                <textarea rows={3} placeholder="Describe the expenditure..." className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 outline-none transition-all resize-none" value={formData.remarks} onChange={e => setFormData({...formData, remarks: e.target.value})} />
+                <textarea rows={3} placeholder="Describe the expenditure..." className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-rose-500 outline-none transition-all bg-white !text-red-600 !font-bold resize-none" style={{ color: 'red', fontWeight: 'bold' }} value={formData.remarks} onChange={e => setFormData({...formData, remarks: e.target.value})} />
               </div>
               
               <div className="flex items-center gap-2 mb-2 bg-slate-50 p-3 rounded-lg border border-slate-200">
@@ -156,16 +156,16 @@ export default function ExpendituresPage() {
                           {editingId === exp.id ? (
                             <>
                               <td className="p-3">
-                                <input type="date" className="w-full px-2 py-1.5 border border-indigo-300 rounded-md text-sm focus:ring-2 focus:ring-indigo-400 outline-none bg-white" value={editData.date} onChange={e => setEditData({...editData, date: e.target.value})} />
+                                <input type="date" className="w-full px-2 py-1.5 border border-indigo-300 rounded-md text-sm focus:ring-2 focus:ring-indigo-400 outline-none bg-white text-red-600 font-bold" value={editData.date} onChange={e => setEditData({...editData, date: e.target.value})} />
                               </td>
                               <td className="p-3">
-                                <input type="month" className="w-full px-2 py-1.5 border border-indigo-300 rounded-md text-sm focus:ring-2 focus:ring-indigo-400 outline-none bg-white" value={editData.monthYear} onChange={e => setEditData({...editData, monthYear: e.target.value})} />
+                                <input type="month" className="w-full px-2 py-1.5 border border-indigo-300 rounded-md text-sm focus:ring-2 focus:ring-indigo-400 outline-none bg-white text-red-600 font-bold" value={editData.monthYear} onChange={e => setEditData({...editData, monthYear: e.target.value})} />
                               </td>
                               <td className="p-3">
-                                <input type="text" className="w-full px-2 py-1.5 border border-indigo-300 rounded-md text-sm focus:ring-2 focus:ring-indigo-400 outline-none" value={editData.remarks} onChange={e => setEditData({...editData, remarks: e.target.value})} />
+                                <input type="text" className="w-full px-2 py-1.5 border border-indigo-300 rounded-md text-sm focus:ring-2 focus:ring-indigo-400 outline-none text-red-600 font-bold" value={editData.remarks} onChange={e => setEditData({...editData, remarks: e.target.value})} />
                               </td>
                               <td className="p-3">
-                                <input type="number" step="1" min="0" className="w-24 px-2 py-1.5 border border-indigo-300 rounded-md text-sm focus:ring-2 focus:ring-indigo-400 outline-none" value={editData.amount} onChange={e => setEditData({...editData, amount: e.target.value})} />
+                                <input type="number" step="1" min="0" className="w-24 px-2 py-1.5 border border-indigo-300 rounded-md text-sm focus:ring-2 focus:ring-indigo-400 outline-none text-red-600 font-bold" value={editData.amount} onChange={e => setEditData({...editData, amount: e.target.value})} />
                                 <div className="mt-1 flex items-center gap-1">
                                   <input type="checkbox" id={`editChit_${exp.id}`} className="w-3 h-3" checked={editData.isChitPayment} onChange={e => setEditData({...editData, isChitPayment: e.target.checked})} />
                                   <label htmlFor={`editChit_${exp.id}`} className="text-[10px] text-slate-500">Chit</label>

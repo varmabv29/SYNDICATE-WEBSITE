@@ -112,20 +112,20 @@ export default function UserManagementPage() {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
-                  <input required type="text" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all" placeholder="Jane Doe" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
+                  <input required type="text" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-slate-50 text-slate-900 font-medium" placeholder="Jane Doe" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Username</label>
-                  <input required disabled={isEditing} type="text" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all disabled:bg-slate-100 disabled:text-slate-500" placeholder="janedoe" value={formData.username} onChange={e => setFormData({...formData, username: e.target.value})} />
+                  <input required disabled={isEditing} type="text" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-slate-50 text-slate-900 font-medium disabled:bg-slate-100 disabled:text-slate-500" placeholder="janedoe" value={formData.username} onChange={e => setFormData({...formData, username: e.target.value})} />
                   {isEditing && <p className="text-xs mt-1 text-slate-500">Username cannot be changed.</p>}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
-                  <input required={!isEditing} type="password" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all" placeholder={isEditing ? "(Leave blank to keep current)" : "••••••••"} value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
+                  <input required={!isEditing} type="password" className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-slate-50 text-slate-900 font-medium" placeholder={isEditing ? "(Leave blank to keep current)" : "••••••••"} value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Role</label>
-                  <select className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all" value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})}>
+                  <select className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-slate-50 text-slate-900 font-medium" value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})}>
                     <option value="MEMBER">Member</option>
                     <option value="ADMIN">Admin</option>
                   </select>

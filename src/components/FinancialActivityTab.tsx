@@ -194,13 +194,13 @@ export default function FinancialActivityTab({ isAdmin, members = [] }: Props) {
                 <Users className="w-3.5 h-3.5 inline mr-1" />Member
               </label>
               <select
-                className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none bg-white min-w-[180px]"
+                className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none bg-slate-50 text-slate-900 font-medium min-w-[180px]"
                 value={selectedUser}
                 onChange={(e) => setSelectedUser(e.target.value)}
               >
-                <option value="">All Members</option>
+                <option value="" className="bg-white">All Members</option>
                 {members.map((m) => (
-                  <option key={m.id} value={m.id}>{m.name || m.username} (@{m.username})</option>
+                  <option key={m.id} value={m.id} className="bg-white">{m.name || m.username} (@{m.username})</option>
                 ))}
               </select>
             </div>
@@ -208,11 +208,11 @@ export default function FinancialActivityTab({ isAdmin, members = [] }: Props) {
 
           <div>
             <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Start Date</label>
-            <input type="date" className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+            <input type="date" className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none bg-slate-50 text-slate-900 font-medium" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
           </div>
           <div>
             <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">End Date</label>
-            <input type="date" className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+            <input type="date" className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none bg-slate-50 text-slate-900 font-medium" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
           </div>
 
           <div className="flex gap-1">

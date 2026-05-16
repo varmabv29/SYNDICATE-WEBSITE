@@ -292,18 +292,18 @@ export default function AdminReportsPage() {
                 Select Member
               </label>
               <select
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all bg-white"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all bg-slate-50 text-slate-900 font-medium"
                 value={selectedUserId}
                 onChange={(e) => setSelectedUserId(e.target.value)}
                 disabled={membersLoading}
               >
                 {membersLoading ? (
-                  <option>Loading members...</option>
+                  <option className="bg-white">Loading members...</option>
                 ) : (
                   <>
-                    <option value="all">All Members</option>
+                    <option value="all" className="bg-white">All Members</option>
                     {members.map((m) => (
-                      <option key={m.id} value={m.id}>
+                      <option key={m.id} value={m.id} className="bg-white">
                         {m.name} (@{m.username})
                       </option>
                     ))}
@@ -317,7 +317,7 @@ export default function AdminReportsPage() {
               </label>
               <input
                 type="date"
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all bg-slate-50 text-slate-900 font-medium"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
               />
@@ -328,7 +328,7 @@ export default function AdminReportsPage() {
               </label>
               <input
                 type="date"
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-all bg-slate-50 text-slate-900 font-medium"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
               />

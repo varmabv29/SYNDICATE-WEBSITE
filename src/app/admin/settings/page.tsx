@@ -114,7 +114,7 @@ export default function SettingsPage() {
                   type="number" 
                   step="1" 
                   min="0"
-                  className="w-full max-w-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all" 
+                  className="w-full max-w-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-slate-50 text-slate-900 font-medium"
                   value={monthlyPremium} 
                   onChange={e => setMonthlyPremium(e.target.value)} 
                 />
@@ -161,7 +161,7 @@ export default function SettingsPage() {
                 <input 
                   required
                   type={showCurrent ? "text" : "password"}
-                  className="w-full px-3 py-2 pr-10 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                  className="w-full px-3 py-2 pr-10 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-slate-50 text-slate-900 font-medium"
                   placeholder="Enter current password"
                   value={currentPassword}
                   onChange={e => setCurrentPassword(e.target.value)}
@@ -183,7 +183,7 @@ export default function SettingsPage() {
                   required
                   type={showNew ? "text" : "password"}
                   minLength={6}
-                  className="w-full px-3 py-2 pr-10 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                  className="w-full px-3 py-2 pr-10 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-slate-50 text-slate-900 font-medium"
                   placeholder="At least 6 characters"
                   value={newPassword}
                   onChange={e => setNewPassword(e.target.value)}
@@ -205,7 +205,7 @@ export default function SettingsPage() {
                   required
                   type="password"
                   minLength={6}
-                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all ${
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-slate-50 text-slate-900 font-medium ${
                     confirmPassword && confirmPassword !== newPassword 
                       ? "border-rose-400 bg-rose-50" 
                       : "border-slate-300"

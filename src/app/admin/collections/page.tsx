@@ -124,7 +124,7 @@ export default function BulkCollectionsPage() {
               <input 
                 required 
                 type="date" 
-                className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-sm" 
+                className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-sm bg-white text-slate-900 font-medium"
                 value={collectionDate} 
                 onChange={e => setCollectionDate(e.target.value)} 
               />
@@ -164,7 +164,7 @@ export default function BulkCollectionsPage() {
                           step="1" 
                           min="0"
                           placeholder="0"
-                          className="w-full max-w-[140px] px-3 py-2 border border-slate-200 rounded-md focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
+                          className="w-full max-w-[140px] px-3 py-2 border border-slate-300 rounded-md focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all bg-white text-slate-900 font-medium"
                           value={entry.premiumAmount}
                           onChange={e => handleInputChange(idx, "premiumAmount", e.target.value)}
                         />

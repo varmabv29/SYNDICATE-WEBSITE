@@ -121,12 +121,12 @@ export default function ProjectedPaymentsTab({ isAdmin, members = [] }: Props) {
             <Calendar className="w-3.5 h-3.5 inline mr-1" />Target Month
           </label>
           <select
-            className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-cyan-500 outline-none bg-white"
+            className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-cyan-500 outline-none bg-slate-50 text-slate-900 font-medium"
             value={selectedMonth}
             onChange={(e) => setSelectedMonth(e.target.value)}
           >
             {monthOptions.map((m) => (
-              <option key={m} value={m}>{m}</option>
+              <option key={m} value={m} className="bg-white">{m}</option>
             ))}
           </select>
         </div>
@@ -137,13 +137,13 @@ export default function ProjectedPaymentsTab({ isAdmin, members = [] }: Props) {
               <Users className="w-3.5 h-3.5 inline mr-1" />Member
             </label>
             <select
-              className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-cyan-500 outline-none bg-white min-w-[200px]"
+              className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-cyan-500 outline-none bg-slate-50 text-slate-900 font-medium min-w-[200px]"
               value={selectedUser}
               onChange={(e) => { setSelectedUser(e.target.value); setExpandedUser(null); }}
             >
-              <option value="all">All Members</option>
+              <option value="all" className="bg-white">All Members</option>
               {filteredMembers.map((m) => (
-                <option key={m.id} value={m.id}>
+                <option key={m.id} value={m.id} className="bg-white">
                   {m.name || m.username} (@{m.username})
                 </option>
               ))}
@@ -159,7 +159,7 @@ export default function ProjectedPaymentsTab({ isAdmin, members = [] }: Props) {
             <input
               type="text"
               placeholder="Filter members..."
-              className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-cyan-500 outline-none"
+              className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-cyan-500 outline-none bg-slate-50 text-slate-900 font-medium"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
