@@ -470,46 +470,72 @@ interface ProjectedGrandTotal {
   totalDue: number;
 }
 
+export interface LoanPaymentPDFRow {
+  loanId: string;
+  memberName: string;
+  username: string;
+  principalAmount: number;
+  interestRate: number;
+  principalDue: number;
+  interestDue: number;
+  emiDue: number;
+  monthYear: string;
+  installmentFraction?: string;
+  installmentNumber?: number;
+  totalInstallments?: number;
+}
+
 export async function downloadProjectedPDF(
   projections: ProjectionRow[],
   grandTotal: ProjectedGrandTotal,
   targetMonthYear: string,
-  isAllMembers: boolean
+  isAllMembers: boolean,
+  loanPayments?: LoanPaymentPDFRow[]
 ) {
   const { jsPDF, autoTable } = await loadPdfLibs();
   const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
 
   addHeader(
     doc,
-    `Projected Payments — ${targetMonthYear}`,
-    isAllMembers ? "All Members Summary" : `Member: ${projections[0]?.memberName || "N/A"}`
+    `Future Payments Report — ${targetMonthYear}`,
+    isAllMembers ? "Consolidated Member & Loan Obligations" : `Member: ${projections[0]?.memberName || "N/A"}`
   );
 
   let y = 36;
-
-  // Info bar
   const pageW = doc.internal.pageSize.getWidth();
+
+  const baseContribution = projections[0]?.baseContribution || 3000;
+  const totalBase = projections.reduce((s, p) => s + (p.baseContribution || baseContribution), 0);
+  const totalLoanPrin = projections.reduce((s, p) => s + (p.loanInstallmentPrincipal || 0), 0);
+  const totalLoanInt = projections.reduce((s, p) => s + (p.accruedInterest || 0), 0);
+  const totalLoanEmi = totalLoanPrin + totalLoanInt;
+  const grandTotalAll = totalLoanEmi + totalBase;
+
+  const totalLoansCount = projections.reduce((s, p) => s + (p.loanBreakdown?.length || 0), 0);
+
+  // Top Info bar
   doc.setFillColor(238, 242, 255); // indigo-50
   doc.setDrawColor(...BRAND_COLOR);
-  doc.roundedRect(14, y, pageW - 28, 14, 3, 3, "FD");
+  doc.roundedRect(12, y, pageW - 24, 14, 3, 3, "FD");
 
   const infoItems = [
     { label: "Target Month", value: targetMonthYear },
-    { label: "Members", value: String(projections.length) },
-    { label: "Total Base", value: `₹${grandTotal.baseContribution.toFixed(0)}` },
-    { label: "Total Principal", value: `₹${grandTotal.loanInstallmentPrincipal.toFixed(0)}` },
-    { label: "Total Interest", value: `₹${grandTotal.accruedInterest.toFixed(0)}` },
-    { label: "Grand Total", value: `₹${grandTotal.totalDue.toFixed(0)}` },
+    { label: "Active Loans", value: String(totalLoansCount) },
+    { label: "Principal Due", value: `Rs. ${Math.round(totalLoanPrin).toLocaleString("en-IN")}` },
+    { label: "Interest Due", value: `Rs. ${Math.round(totalLoanInt).toLocaleString("en-IN")}` },
+    { label: "Loan EMIs", value: `Rs. ${Math.round(totalLoanEmi).toLocaleString("en-IN")}` },
+    { label: "Base Premiums", value: `Rs. ${Math.round(totalBase).toLocaleString("en-IN")}` },
+    { label: "Grand Total Due", value: `Rs. ${Math.round(grandTotalAll).toLocaleString("en-IN")}` },
   ];
 
-  const infoColW = (pageW - 28) / infoItems.length;
+  const infoColW = (pageW - 24) / infoItems.length;
   infoItems.forEach((item, i) => {
-    const x = 14 + i * infoColW + infoColW / 2;
+    const x = 12 + i * infoColW + infoColW / 2;
     doc.setFontSize(6);
     doc.setFont("helvetica", "normal");
     doc.setTextColor(79, 70, 229); // indigo-600
     doc.text(item.label.toUpperCase(), x, y + 5, { align: "center" });
-    doc.setFontSize(9);
+    doc.setFontSize(8.5);
     doc.setFont("helvetica", "bold");
     doc.setTextColor(15, 23, 42);
     doc.text(item.value, x, y + 11, { align: "center" });
@@ -517,51 +543,241 @@ export async function downloadProjectedPDF(
 
   y += 20;
 
-  const tableData = projections.map((p, idx) => [
-    String(idx + 1),
-    p.memberName,
-    `₹${p.baseContribution.toFixed(0)}`,
-    `₹${p.loanInstallmentPrincipal.toFixed(0)}`,
-    `₹${p.accruedInterest.toFixed(0)}`,
-    `₹${p.totalDue.toFixed(0)}`,
-  ]);
+  // Build table data grouped by member with subtotal rows
+  const tableData: string[][] = [];
+  let sNo = 1;
 
-  // Grand total row
+  projections.forEach((p) => {
+    const memberName = p.memberName;
+    const memberBase = p.baseContribution || baseContribution;
+    const loans = p.loanBreakdown || [];
+
+    if (loans.length > 0) {
+      loans.forEach((lb: any) => {
+        const frac = lb.installmentFraction || (lb.installmentNumber && lb.totalInstallments ? `${lb.installmentNumber}/${lb.totalInstallments}` : "—");
+        tableData.push([
+          String(sNo++),
+          memberName,
+          lb.loanId,
+          frac,
+          `Rs. ${Math.round(lb.principalDue).toLocaleString("en-IN")}`,
+          `Rs. ${Math.round(lb.interestDue).toLocaleString("en-IN")}`,
+          `Rs. ${Math.round(lb.emiDue).toLocaleString("en-IN")}`,
+          "—",
+          `Rs. ${Math.round(lb.emiDue).toLocaleString("en-IN")}`,
+        ]);
+      });
+    } else {
+      tableData.push([
+        String(sNo++),
+        memberName,
+        "—",
+        "—",
+        "Rs. 0",
+        "Rs. 0",
+        "Rs. 0",
+        `Rs. ${Math.round(memberBase).toLocaleString("en-IN")}`,
+        `Rs. ${Math.round(memberBase).toLocaleString("en-IN")}`,
+      ]);
+    }
+
+    // Member Total Row
+    const memberPrin = loans.reduce((s: number, l: any) => s + (l.principalDue || 0), 0);
+    const memberInt = loans.reduce((s: number, l: any) => s + (l.interestDue || 0), 0);
+    const memberEmi = loans.reduce((s: number, l: any) => s + (l.emiDue || 0), 0);
+    const memberTotalToPay = memberEmi + memberBase;
+
+    tableData.push([
+      "",
+      `Total to be Paid (${memberName})`,
+      "",
+      loans.length > 0 ? `${loans.length} loan(s)` : "No loans",
+      `Rs. ${Math.round(memberPrin).toLocaleString("en-IN")}`,
+      `Rs. ${Math.round(memberInt).toLocaleString("en-IN")}`,
+      `Rs. ${Math.round(memberEmi).toLocaleString("en-IN")}`,
+      `Rs. ${Math.round(memberBase).toLocaleString("en-IN")}`,
+      `Rs. ${Math.round(memberTotalToPay).toLocaleString("en-IN")}`,
+    ]);
+  });
+
+  // Grand Total Row
   tableData.push([
     "",
-    "GRAND TOTAL",
-    `₹${grandTotal.baseContribution.toFixed(0)}`,
-    `₹${grandTotal.loanInstallmentPrincipal.toFixed(0)}`,
-    `₹${grandTotal.accruedInterest.toFixed(0)}`,
-    `₹${grandTotal.totalDue.toFixed(0)}`,
+    `GRAND TOTAL (${projections.length} MEMBERS)`,
+    "",
+    `${totalLoansCount} loans`,
+    `Rs. ${Math.round(totalLoanPrin).toLocaleString("en-IN")}`,
+    `Rs. ${Math.round(totalLoanInt).toLocaleString("en-IN")}`,
+    `Rs. ${Math.round(totalLoanEmi).toLocaleString("en-IN")}`,
+    `Rs. ${Math.round(totalBase).toLocaleString("en-IN")}`,
+    `Rs. ${Math.round(grandTotalAll).toLocaleString("en-IN")}`,
   ]);
 
   autoTable(doc, {
     startY: y,
-    head: [["#", "Member Name", "Base Contribution (₹)", "Loan Principal (₹)", "Interest (₹)", "Total Due (₹)"]],
+    head: [
+      [
+        {
+          content: `1. CONSOLIDATED MEMBER & LOAN PAYMENT OBLIGATIONS (${targetMonthYear})`,
+          colSpan: 9,
+          styles: {
+            halign: "left",
+            fillColor: [240, 253, 250],
+            textColor: [15, 118, 110],
+            fontStyle: "bold",
+            fontSize: 8,
+            cellPadding: 2.8,
+          },
+        },
+      ],
+      [
+        "#",
+        "Member Name",
+        "Loan ID",
+        "Instalment",
+        "Principal Due",
+        "Interest Due",
+        "Loan EMI",
+        "Base Contrib.",
+        "Total to Pay",
+      ],
+    ],
     body: tableData,
     theme: "grid",
     headStyles: {
       fillColor: HEADER_BG,
       textColor: [255, 255, 255],
       fontStyle: "bold",
-      fontSize: 8,
-      cellPadding: 3,
+      fontSize: 7.5,
+      cellPadding: 2.5,
       halign: "center",
+      valign: "middle",
     },
-    bodyStyles: { fontSize: 8, cellPadding: 2.5, halign: "center" },
+    bodyStyles: {
+      fontSize: 7.5,
+      cellPadding: 2.2,
+      halign: "center",
+      valign: "middle",
+    },
     alternateRowStyles: { fillColor: ALT_ROW },
-    styles: { lineColor: BORDER_COLOR, lineWidth: 0.3, overflow: "linebreak", cellWidth: "wrap" },
-    columnStyles: {
-      0: { halign: "center", cellWidth: 12 },
+    styles: {
+      lineColor: BORDER_COLOR,
+      lineWidth: 0.3,
+      overflow: "linebreak",
+      halign: "center",
+      valign: "middle",
     },
-    margin: { left: 14, right: 14 },
-    didParseCell: (data: any) => {
-      // Style the grand total row
-      if (data.section === "body" && data.row.index === tableData.length - 1) {
-        data.cell.styles.fontStyle = "bold";
-        data.cell.styles.fillColor = BRAND_DARK as any;
-        data.cell.styles.textColor = [255, 255, 255];
+    columnStyles: {
+      0: { halign: "center", cellWidth: 10 },
+      1: { halign: "center", cellWidth: 44 },
+      2: { halign: "center", cellWidth: 26 },
+      3: { halign: "center", cellWidth: 22 },
+      4: { halign: "center", cellWidth: 32 },
+      5: { halign: "center", cellWidth: 30 },
+      6: { halign: "center", cellWidth: 33 },
+      7: { halign: "center", cellWidth: 32 },
+      8: { halign: "center", cellWidth: 42 },
+    },
+    margin: { left: 12, right: 12 },
+    didParseCell: (cellData: any) => {
+      const rawText = cellData.row.raw[1]?.toString() || "";
+      const isGrandTotal = cellData.row.index === tableData.length - 1;
+      const isMemberTotal = rawText.startsWith("Total to be Paid");
+
+      if (cellData.section === "body") {
+        if (isGrandTotal) {
+          cellData.cell.styles.fontStyle = "bold";
+          cellData.cell.styles.fillColor = BRAND_DARK as any;
+          cellData.cell.styles.textColor = [255, 255, 255];
+          cellData.cell.styles.halign = "center";
+        } else if (isMemberTotal) {
+          cellData.cell.styles.fontStyle = "bold";
+          cellData.cell.styles.fillColor = [254, 242, 242] as any; // red-50
+          cellData.cell.styles.textColor = [220, 38, 38]; // red font color
+          cellData.cell.styles.halign = "center";
+        }
+      }
+    },
+  });
+
+  // ─── 2. Overall Payment Summary Section in PDF (matching Excel format) ───
+  const finalY = (doc as any).lastAutoTable?.finalY || y;
+  const pageH = doc.internal.pageSize.getHeight();
+  const summaryStartY = finalY + 65 > pageH - 15 ? (doc.addPage(), 22) : finalY + 8;
+
+  const summaryTableData = [
+    [
+      "Total Active Loans with Payments Due",
+      `${totalLoansCount} Loans`
+    ],
+    [
+      "Total Principal to be Collected (Loans)",
+      `Rs. ${totalLoanPrin.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+    ],
+    [
+      "Total Interest to be Collected (Loans)",
+      `Rs. ${totalLoanInt.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+    ],
+    [
+      "Total Future Loan Payments (Principal + Interest)",
+      `Rs. ${totalLoanEmi.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+    ],
+    [
+      `Total Member Monthly Base Contributions (${projections.length} Members)`,
+      `Rs. ${totalBase.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+    ],
+    [
+      "Grand Total Amount to be Paid (Loans + Base Contributions)",
+      `Rs. ${grandTotalAll.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+    ],
+  ];
+
+  const summaryWidth = 200;
+  const summaryLeftMargin = (pageW - summaryWidth) / 2;
+
+  autoTable(doc, {
+    startY: summaryStartY,
+    head: [[
+      {
+        content: `2. OVERALL PAYMENT SUMMARY (${targetMonthYear})`,
+        colSpan: 2,
+        styles: {
+          halign: "left",
+          fillColor: [240, 253, 250], // teal-50
+          textColor: [15, 118, 110], // teal-700
+          fontStyle: "bold",
+          fontSize: 8,
+          cellPadding: 2.8,
+        },
+      },
+    ]],
+    body: summaryTableData,
+    theme: "grid",
+    styles: {
+      lineColor: [203, 213, 225], // slate-300
+      lineWidth: 0.3,
+      fontSize: 7.5,
+      cellPadding: 2.4,
+      valign: "middle",
+    },
+    columnStyles: {
+      0: { halign: "left", cellWidth: 135, fontStyle: "bold", textColor: [51, 65, 85] },
+      1: { halign: "right", cellWidth: 65, fontStyle: "bold", textColor: [15, 23, 42] },
+    },
+    margin: { left: summaryLeftMargin, right: summaryLeftMargin },
+    didParseCell: (cellData: any) => {
+      if (cellData.section === "body") {
+        if (cellData.row.index === 3) {
+          cellData.cell.styles.fillColor = [236, 253, 245]; // emerald-50
+          cellData.cell.styles.textColor = [4, 120, 87]; // emerald-700
+          cellData.cell.styles.fontStyle = "bold";
+        }
+        if (cellData.row.index === 5) {
+          cellData.cell.styles.fillColor = [209, 250, 229]; // emerald-100
+          cellData.cell.styles.textColor = [6, 95, 70]; // emerald-800
+          cellData.cell.styles.fontStyle = "bold";
+          cellData.cell.styles.fontSize = 8.5;
+        }
       }
     },
   });

@@ -6,6 +6,7 @@ import { Download, FileText, FileSpreadsheet, ChevronDown } from "lucide-react";
 interface DownloadDropdownProps {
   onDownloadCSV: () => void;
   onDownloadPDF: () => void;
+  onDownloadExcel?: () => void;
   disabled?: boolean;
   color?: "emerald" | "indigo" | "violet";
   label?: string;
@@ -27,6 +28,7 @@ const compactButtonStyles = {
 export default function DownloadDropdown({
   onDownloadCSV,
   onDownloadPDF,
+  onDownloadExcel,
   disabled = false,
   color = "indigo",
   label = "Download",
@@ -46,7 +48,24 @@ export default function DownloadDropdown({
   }, []);
 
   const dropdownMenu = (
-    <div className="absolute right-0 top-full mt-1.5 w-48 bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 z-50">
+    <div className="absolute right-0 top-full mt-1.5 w-52 bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 z-50">
+      {onDownloadExcel && (
+        <>
+          <button
+            onClick={() => { onDownloadExcel(); setOpen(false); }}
+            className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+          >
+            <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
+              <FileSpreadsheet className="w-4 h-4 text-emerald-700" />
+            </div>
+            <div className="text-left">
+              <div className="text-xs font-semibold text-slate-800">Excel (.xls)</div>
+              <div className="text-[10px] text-slate-400">Formatted with totals</div>
+            </div>
+          </button>
+          <div className="mx-3 border-t border-slate-100" />
+        </>
+      )}
       <button
         onClick={() => { onDownloadCSV(); setOpen(false); }}
         className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
@@ -56,7 +75,7 @@ export default function DownloadDropdown({
         </div>
         <div className="text-left">
           <div className="text-xs font-semibold text-slate-800">CSV File</div>
-          <div className="text-[10px] text-slate-400">Spreadsheet format</div>
+          <div className="text-[10px] text-slate-400">Spreadsheet data</div>
         </div>
       </button>
       <div className="mx-3 border-t border-slate-100" />

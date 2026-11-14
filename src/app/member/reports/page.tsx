@@ -12,10 +12,12 @@ import {
   CheckCircle2,
   Users,
   Filter,
+  TrendingUp,
 } from "lucide-react";
 import { formatDate } from "@/lib/format";
 import type { Installment } from "@/types/models";
 import DownloadDropdown from "@/components/DownloadDropdown";
+import ProjectedPaymentsTab from "@/components/ProjectedPaymentsTab";
 
 interface MemberListItem {
   id: string;
@@ -71,7 +73,7 @@ interface ReportData {
   paidInstallments: PaidInstallmentRow[];
 }
 
-type TabKey = "premiums" | "loans" | "payments";
+type TabKey = "premiums" | "loans" | "payments" | "projected";
 
 export default function MemberReportsPage() {
   const [members, setMembers] = useState<MemberListItem[]>([]);
@@ -191,6 +193,7 @@ export default function MemberReportsPage() {
     { key: "premiums", label: "Premium Statement", icon: CreditCard },
     { key: "loans", label: "Loan Statement", icon: Banknote },
     { key: "payments", label: "Date-wise Payments", icon: CalendarCheck },
+    { key: "projected", label: "Future Payments", icon: TrendingUp },
   ];
 
   return (
@@ -565,6 +568,10 @@ export default function MemberReportsPage() {
                   </table>
                 </div>
               </div>
+            )}
+            {/* Projected Payments Tab */}
+            {activeTab === "projected" && (
+              <ProjectedPaymentsTab isAdmin={false} />
             )}
           </>
         )}

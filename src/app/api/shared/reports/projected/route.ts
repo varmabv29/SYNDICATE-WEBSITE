@@ -63,13 +63,12 @@ export async function GET(req: NextRequest) {
 
       if (!user) continue;
 
-      // Find all active loans for this user
+      // Find all active loans for this user with all installments to calculate installment fraction
       const activeLoans = await prisma.loan.findMany({
         where: { userId: uid, status: "ACTIVE" },
         include: {
           installments: {
-            where: { monthYear: targetMonthYear, status: "PENDING" },
-            take: 1,
+            orderBy: { dueDate: "asc" },
           },
         },
       });
@@ -79,19 +78,32 @@ export async function GET(req: NextRequest) {
       const loanBreakdown = [];
 
       for (const loan of activeLoans) {
-        if (loan.installments.length > 0) {
-          const inst = loan.installments[0];
-          totalLoanPrincipal += inst.principalDue;
-          totalAccruedInterest += inst.interestDue;
-          loanBreakdown.push({
-            loanId: loan.customId,
-            principalAmount: loan.principalAmount,
-            interestRate: loan.interestRate,
-            principalDue: inst.principalDue,
-            interestDue: inst.interestDue,
-            emiDue: inst.amountDue,
-            monthYear: inst.monthYear,
-          });
+        const totalInstallments = loan.installments.length;
+        const targetIndex = loan.installments.findIndex(
+          (i) => i.monthYear === targetMonthYear
+        );
+
+        if (targetIndex >= 0) {
+          const inst = loan.installments[targetIndex];
+          if (inst.status === "PENDING") {
+            const installmentNumber = targetIndex + 1;
+            const installmentFraction = `${installmentNumber}/${totalInstallments}`;
+
+            totalLoanPrincipal += inst.principalDue;
+            totalAccruedInterest += inst.interestDue;
+            loanBreakdown.push({
+              loanId: loan.customId,
+              principalAmount: loan.principalAmount,
+              interestRate: loan.interestRate,
+              principalDue: inst.principalDue,
+              interestDue: inst.interestDue,
+              emiDue: inst.amountDue,
+              monthYear: inst.monthYear,
+              installmentNumber,
+              totalInstallments,
+              installmentFraction,
+            });
+          }
         }
       }
 
@@ -109,21 +121,53 @@ export async function GET(req: NextRequest) {
       });
     }
 
+    // Compute loan-wise flattened list
+    const loanPayments = [];
+    for (const p of projections) {
+      for (const lb of p.loanBreakdown) {
+        loanPayments.push({
+          loanId: lb.loanId,
+          userId: p.userId,
+          memberName: p.memberName,
+          username: p.username,
+          principalAmount: lb.principalAmount,
+          interestRate: lb.interestRate,
+          principalDue: lb.principalDue,
+          interestDue: lb.interestDue,
+          emiDue: lb.emiDue,
+          monthYear: lb.monthYear,
+          installmentNumber: lb.installmentNumber,
+          totalInstallments: lb.totalInstallments,
+          installmentFraction: lb.installmentFraction,
+        });
+      }
+    }
+
+    const loanSummary = {
+      totalLoans: loanPayments.length,
+      totalPrincipalSanctioned: loanPayments.reduce((s, l) => s + l.principalAmount, 0),
+      totalPrincipalDue: loanPayments.reduce((s, l) => s + l.principalDue, 0),
+      totalInterestDue: loanPayments.reduce((s, l) => s + l.interestDue, 0),
+      totalEmiDue: loanPayments.reduce((s, l) => s + l.emiDue, 0),
+    };
+
     // Compute grand total
     const grandTotal = {
       baseContribution: projections.reduce((s, p) => s + p.baseContribution, 0),
-      loanInstallmentPrincipal: projections.reduce(
-        (s, p) => s + p.loanInstallmentPrincipal,
-        0
-      ),
-      accruedInterest: projections.reduce((s, p) => s + p.accruedInterest, 0),
-      totalDue: projections.reduce((s, p) => s + p.totalDue, 0),
+      loanInstallmentPrincipal: loanSummary.totalPrincipalDue,
+      accruedInterest: loanSummary.totalInterestDue,
+      totalLoanDue: loanSummary.totalEmiDue,
+      totalDue:
+        projections.reduce((s, p) => s + p.baseContribution, 0) +
+        loanSummary.totalEmiDue,
     };
 
     return NextResponse.json({
       targetMonthYear,
       baseContribution,
       projections,
+      loanPayments,
+      loanSummary,
       grandTotal,
     });
   } catch (error: any) {
