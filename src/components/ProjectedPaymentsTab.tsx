@@ -399,59 +399,59 @@ export default function ProjectedPaymentsTab({ isAdmin, members = [] }: Props) {
   </Style>
   <Style ss:ID="MemberTotalLabel">
    <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
-   <Font ss:FontName="Segoe UI" ss:Size="9.5" ss:Bold="1" ss:Color="#0F766E"/>
-   <Interior ss:Color="#CCFBF1" ss:Pattern="Solid"/>
+   <Font ss:FontName="Segoe UI" ss:Size="9.5" ss:Bold="1" ss:Color="#DC2626"/>
+   <Interior ss:Color="#FEF2F2" ss:Pattern="Solid"/>
    <Borders>
-    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#0D9488"/>
-    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#0D9488"/>
-    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#99F6E4"/>
-    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#99F6E4"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#F87171"/>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#F87171"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#FECACA"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#FECACA"/>
    </Borders>
   </Style>
   <Style ss:ID="MemberTotalName">
    <Alignment ss:Horizontal="Left" ss:Vertical="Center"/>
-   <Font ss:FontName="Segoe UI" ss:Size="9.5" ss:Bold="1" ss:Color="#0F766E"/>
-   <Interior ss:Color="#CCFBF1" ss:Pattern="Solid"/>
+   <Font ss:FontName="Segoe UI" ss:Size="9.5" ss:Bold="1" ss:Color="#DC2626"/>
+   <Interior ss:Color="#FEF2F2" ss:Pattern="Solid"/>
    <Borders>
-    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#0D9488"/>
-    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#0D9488"/>
-    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#99F6E4"/>
-    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#99F6E4"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#F87171"/>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#F87171"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#FECACA"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#FECACA"/>
    </Borders>
   </Style>
   <Style ss:ID="MemberTotalCenter">
    <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
-   <Font ss:FontName="Segoe UI" ss:Size="9.5" ss:Bold="1" ss:Color="#0F766E"/>
-   <Interior ss:Color="#CCFBF1" ss:Pattern="Solid"/>
+   <Font ss:FontName="Segoe UI" ss:Size="9.5" ss:Bold="1" ss:Color="#DC2626"/>
+   <Interior ss:Color="#FEF2F2" ss:Pattern="Solid"/>
    <Borders>
-    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#0D9488"/>
-    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#0D9488"/>
-    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#99F6E4"/>
-    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#99F6E4"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#F87171"/>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#F87171"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#FECACA"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#FECACA"/>
    </Borders>
   </Style>
   <Style ss:ID="MemberTotalCurrency">
    <Alignment ss:Horizontal="Right" ss:Vertical="Center"/>
-   <Font ss:FontName="Segoe UI" ss:Size="9.5" ss:Bold="1" ss:Color="#0F766E"/>
-   <Interior ss:Color="#CCFBF1" ss:Pattern="Solid"/>
+   <Font ss:FontName="Segoe UI" ss:Size="9.5" ss:Bold="1" ss:Color="#DC2626"/>
+   <Interior ss:Color="#FEF2F2" ss:Pattern="Solid"/>
    <NumberFormat ss:Format="₹#,##0.00"/>
    <Borders>
-    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#0D9488"/>
-    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#0D9488"/>
-    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#99F6E4"/>
-    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#99F6E4"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#F87171"/>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#F87171"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#FECACA"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#FECACA"/>
    </Borders>
   </Style>
   <Style ss:ID="MemberTotalHighlight">
    <Alignment ss:Horizontal="Right" ss:Vertical="Center"/>
-   <Font ss:FontName="Segoe UI" ss:Size="10" ss:Bold="1" ss:Color="#047857"/>
-   <Interior ss:Color="#A7F3D0" ss:Pattern="Solid"/>
+   <Font ss:FontName="Segoe UI" ss:Size="10" ss:Bold="1" ss:Color="#B91C1C"/>
+   <Interior ss:Color="#FEE2E2" ss:Pattern="Solid"/>
    <NumberFormat ss:Format="₹#,##0.00"/>
    <Borders>
-    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#059669"/>
-    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#059669"/>
-    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#6EE7B7"/>
-    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#6EE7B7"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#EF4444"/>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#EF4444"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#FCA5A5"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#FCA5A5"/>
    </Borders>
   </Style>
   <Style ss:ID="GrandTotalLabel">
@@ -1022,20 +1022,20 @@ export default function ProjectedPaymentsTab({ isAdmin, members = [] }: Props) {
                         )}
 
                         {/* Member Total Row */}
-                        <tr className="bg-teal-50/50 border-y border-teal-200/80 font-bold text-xs text-teal-950">
-                          <td className="p-2.5 text-center text-teal-600 font-bold">
+                        <tr className="bg-rose-50/50 border-y border-rose-200/80 font-bold text-xs text-rose-950">
+                          <td className="p-2.5 text-center text-rose-600 font-bold">
                             ✓
                           </td>
                           <td className="p-2.5" colSpan={3}>
                             <div className="flex items-center gap-2">
-                              <span className="font-extrabold uppercase tracking-wide text-teal-900 text-[11px]">
+                              <span className="font-extrabold uppercase tracking-wide text-rose-900 text-[11px]">
                                 Total to be Paid:
                               </span>
-                              <span className="text-teal-800 font-semibold">
+                              <span className="text-rose-800 font-semibold">
                                 {memberName}
                               </span>
                               {loans.length > 0 && (
-                                <span className="text-[10px] px-1.5 py-0.2 rounded bg-teal-200/60 text-teal-900">
+                                <span className="text-[10px] px-1.5 py-0.2 rounded bg-rose-200/60 text-rose-900">
                                   {loans.length} loan(s)
                                 </span>
                               )}
@@ -1052,19 +1052,19 @@ export default function ProjectedPaymentsTab({ isAdmin, members = [] }: Props) {
                               : "—"}
                           </td>
                           <td className="p-2.5 text-center text-slate-400">—</td>
-                          <td className="p-2.5 text-right font-mono text-indigo-700">
+                          <td className="p-2.5 text-right font-mono text-rose-700 font-extrabold">
                             ₹{Math.round(memberPrin).toLocaleString("en-IN")}
                           </td>
-                          <td className="p-2.5 text-right font-mono text-rose-600">
+                          <td className="p-2.5 text-right font-mono text-rose-700 font-extrabold">
                             ₹{Math.round(memberInt).toLocaleString("en-IN")}
                           </td>
-                          <td className="p-2.5 text-right font-mono text-teal-800 font-extrabold">
+                          <td className="p-2.5 text-right font-mono text-rose-800 font-extrabold">
                             ₹{Math.round(memberEmi).toLocaleString("en-IN")}
                           </td>
-                          <td className="p-2.5 text-right font-mono text-emerald-700 font-extrabold">
+                          <td className="p-2.5 text-right font-mono text-rose-700 font-extrabold">
                             ₹{Math.round(memberBase).toLocaleString("en-IN")}
                           </td>
-                          <td className="p-2.5 text-right font-mono text-sm font-black text-emerald-800 bg-emerald-100/70">
+                          <td className="p-2.5 text-right font-mono text-sm font-black text-rose-900 bg-rose-100/80">
                             ₹{Math.round(memberTotalToPay).toLocaleString("en-IN")}
                           </td>
                         </tr>
