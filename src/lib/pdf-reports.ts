@@ -692,7 +692,7 @@ export async function downloadProjectedPDF(
           cellData.cell.styles.halign = "center";
         } else if (isMemberTotal) {
           cellData.cell.styles.fontStyle = "bold";
-          cellData.cell.styles.fillColor = [254, 242, 242] as any; // red-50
+          cellData.cell.styles.fillColor = [240, 253, 250] as any; // red-50
           cellData.cell.styles.textColor = [220, 38, 38]; // red font color
           cellData.cell.styles.halign = "center";
         }
